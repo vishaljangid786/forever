@@ -1041,9 +1041,7 @@ const fetchUserData = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-      return res
-        .status(401)
-        .json({ success: false, message: "No token provided" });
+      return res.status(401).json({ success: false, message: "No token provided" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -1051,19 +1049,28 @@ const fetchUserData = async (req, res) => {
 
     let user = await userModel.findById(userId).select("-password");
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
     await processStatusAndLevels();
-    user = await userModel.findById(userId).select("-password"); // 🔁 REFRESH
+    user = await userModel.findById(userId).select("-password"); // Refresh
 
-    // ✅ Step 3: No level completed, just return current data
+    // Convert numeric fields to integers
+    const userObj = user.toObject();
+
+    userObj.left = userObj.left !== undefined ? parseInt(userObj.left) : 0;
+    userObj.right = userObj.right !== undefined ? parseInt(userObj.right) : 0;
+    userObj.pricetopay = userObj.pricetopay !== undefined ? parseInt(userObj.pricetopay) : 0;
+    userObj.amount = userObj.amount !== undefined ? parseInt(userObj.amount) : 0;
+    userObj.level = userObj.level !== undefined ? parseInt(userObj.level) : 0;
+
+    // Convert cc (double) to int as well
+    userObj.cc = userObj.cc !== undefined ? parseInt(userObj.cc) : 0;
+
     return res.status(200).json({
       success: true,
       message: "User data fetched",
-      user,
+      user: userObj,
     });
   } catch (error) {
     console.error("❌ Error in fetchUserData:", error);
@@ -1073,6 +1080,7 @@ const fetchUserData = async (req, res) => {
     });
   }
 };
+
 
 // // ----------------function to change data for all users on cc upadate--------------------------------------------------------------------------
 const processStatusAndLevels = async () => {
