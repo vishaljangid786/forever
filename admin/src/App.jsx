@@ -48,7 +48,7 @@ const App = () => {
       if (token) {
         try {
           const response = await axios.get(
-            `${backendUrl}/api/user/fetchuserdata`,
+            `${backendUrl}/api/user/fetchuserdata2`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }

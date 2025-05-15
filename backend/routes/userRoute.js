@@ -24,6 +24,7 @@ import {
   // updateamountthroughcc,
   getCount,
   updateProfile,
+  fetchUserDataweb,
 } from "../controllers/userController.js";
 import authUser from "../middleware/auth.js";
 
@@ -44,6 +45,7 @@ userRouter.get("/fetchallusers", fetchAllUsers);
 userRouter.put("/updateRole", authRole("admin"), updateRole);
 userRouter.get("/referalcode", authUser, fetchReferralCode);
 userRouter.get("/fetchuserdata", authUser, fetchUserData);
+userRouter.get("/fetchuserdata2",authUser,fetchUserDataweb)
 userRouter.delete("/deleteuser", authRole("admin"), removeUser);
 userRouter.post("/sendOtp", sendOtp);
 userRouter.post("/verifyOtp", verifyOtp);

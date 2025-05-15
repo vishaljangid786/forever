@@ -1036,6 +1036,42 @@ const getCount = async (req, res) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
+const fetchUserDataweb = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res
+        .status(401)
+        .json({ success: false, message: "No token provided" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id || decoded.userId;
+
+    let user = await userModel.findById(userId).select("-password");
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    await processStatusAndLevels();
+    user = await userModel.findById(userId).select("-password"); // 🔁 REFRESH
+
+    // ✅ Step 3: No level completed, just return current data
+    return res.status(200).json({
+      success: true,
+      message: "User data fetched",
+      user,
+    });
+  } catch (error) {
+    console.error("❌ Error in fetchUserData:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching user data",
+    });
+  }
+};
 
 const fetchUserData = async (req, res) => {
   try {
@@ -1168,6 +1204,7 @@ export {
   addReferenceMember,
   getTeamMember,
   getOptionTeam,
+  fetchUserDataweb,
   updatepricetopay,
   // updateamountthroughcc,
 };

@@ -26,7 +26,7 @@ const ShopContextProvider = ({ children }) => {
         return;
       }
 
-      const response = await axios.get(`${backendUrl}/api/user/fetchuserdata`, {
+      const response = await axios.get(`${backendUrl}/api/user/fetchuserdata2`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
