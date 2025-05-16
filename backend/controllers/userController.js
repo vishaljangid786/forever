@@ -174,12 +174,14 @@ const registerUser = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Please enter a valid email" });
     }
+
     if (password.length < 8) {
       return res.status(400).json({
         success: false,
         message: "Password must be at least 8 characters long",
       });
     }
+
     if (!validator.isMobilePhone(phone, "any", { strictMode: false })) {
       return res
         .status(400)
@@ -211,6 +213,7 @@ const registerUser = async (req, res) => {
     } else if (role === "admin" || role === "seller") {
       assignedRole = role;
     }
+
     let referredByUserId = null;
 
     if (
@@ -498,20 +501,19 @@ const getReferredUsers = async (req, res) => {
       .find({ referredBy: userId })
       .select("name email createdAt cc option lev status phone");
 
-      const referredUsers = referredUsersRaw.map((user) => {
-        return {
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone, 
-          createdAt: user.createdAt,
-          option: user.option,
-          status: user.status,
-          cc: parseInt(user.cc || 0),
-          lev: parseInt(user.lev || 0),
-        };
-      });
-    
+    const referredUsers = referredUsersRaw.map((user) => {
+      return {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        createdAt: user.createdAt,
+        option: user.option,
+        status: user.status,
+        cc: parseInt(user.cc || 0),
+        lev: parseInt(user.lev || 0),
+      };
+    });
 
     res.status(200).json({
       success: true,
@@ -728,7 +730,7 @@ const getOptionTeam = async (req, res) => {
     }
     const users = await userModel.find(filter);
 
-    res.status(200).json({ message: `Got ${option} team members`, users });
+    res.status(200).json({ message: `Got ${option} team members`,member: users });
   } catch (error) {
     console.error("getOptionTeam Error:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
@@ -1001,6 +1003,8 @@ const getCount = async (req, res) => {
     }
 
     const user = await userModel.findById(userId);
+    console.log(user);
+    
     if (!user) {
       return res
         .status(404)
@@ -1009,9 +1013,9 @@ const getCount = async (req, res) => {
 
     const { count, users } = await getReferralDetails(userId);
 
-    // Transform cc and lev to int for each user
-    const transformedUsers = users.map((user) => {
-      return {
+    // Transform cc and level to int for each user
+    const transformedUsers = users.map((user, index) => {
+      const mappedUser = {
         _id: user._id,
         name: user.name,
         email: user.email,
@@ -1020,8 +1024,10 @@ const getCount = async (req, res) => {
         option: user.option,
         status: user.status,
         cc: parseInt(user.cc || 0),
-        lev: parseInt(user.lev || 0),
+        level:user.level
       };
+
+      return mappedUser;
     });
 
     return res.status(200).json({
@@ -1037,6 +1043,7 @@ const getCount = async (req, res) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
+
 const fetchUserDataweb = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -1078,7 +1085,9 @@ const fetchUserData = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-      return res.status(401).json({ success: false, message: "No token provided" });
+      return res
+        .status(401)
+        .json({ success: false, message: "No token provided" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -1086,7 +1095,9 @@ const fetchUserData = async (req, res) => {
 
     let user = await userModel.findById(userId).select("-password");
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     await processStatusAndLevels();
@@ -1097,8 +1108,10 @@ const fetchUserData = async (req, res) => {
 
     userObj.left = userObj.left !== undefined ? parseInt(userObj.left) : 0;
     userObj.right = userObj.right !== undefined ? parseInt(userObj.right) : 0;
-    userObj.pricetopay = userObj.pricetopay !== undefined ? parseInt(userObj.pricetopay) : 0;
-    userObj.amount = userObj.amount !== undefined ? parseInt(userObj.amount) : 0;
+    userObj.pricetopay =
+      userObj.pricetopay !== undefined ? parseInt(userObj.pricetopay) : 0;
+    userObj.amount =
+      userObj.amount !== undefined ? parseInt(userObj.amount) : 0;
     userObj.level = userObj.level !== undefined ? parseInt(userObj.level) : 0;
 
     // Convert cc (double) to int as well
@@ -1117,7 +1130,6 @@ const fetchUserData = async (req, res) => {
     });
   }
 };
-
 
 // // ----------------function to change data for all users on cc upadate--------------------------------------------------------------------------
 const processStatusAndLevels = async () => {
