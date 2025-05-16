@@ -282,6 +282,7 @@ const Team = ({ userData, token }) => {
                       {user.name}
                     </p>
                     <p className="text-sm text-gray-600">{user.email}</p>
+                    <p className="text-sm text-gray-600">{user.phone}</p>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-sm text-gray-700">
                         PP: <strong>{user.cc} 🪙</strong>

@@ -496,22 +496,22 @@ const getReferredUsers = async (req, res) => {
 
     const referredUsersRaw = await userModel
       .find({ referredBy: userId })
-      .select("name email createdAt cc option lev status");
+      .select("name email createdAt cc option lev status phone");
 
-    // Create transformed data for response (cc and lev as integers)
-    const referredUsers = referredUsersRaw.map((user) => {
-      return {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone, 
-        createdAt: user.createdAt,
-        option: user.option,
-        status: user.status,
-        cc: parseInt(user.cc || 0),
-        lev: parseInt(user.lev || 0),
-      };
-    });
+      const referredUsers = referredUsersRaw.map((user) => {
+        return {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone, 
+          createdAt: user.createdAt,
+          option: user.option,
+          status: user.status,
+          cc: parseInt(user.cc || 0),
+          lev: parseInt(user.lev || 0),
+        };
+      });
+    
 
     res.status(200).json({
       success: true,
