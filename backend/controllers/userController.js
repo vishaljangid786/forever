@@ -504,6 +504,7 @@ const getReferredUsers = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone, 
         createdAt: user.createdAt,
         option: user.option,
         status: user.status,
@@ -1009,12 +1010,12 @@ const getCount = async (req, res) => {
     const { count, users } = await getReferralDetails(userId);
 
     // Transform cc and lev to int for each user
-    // Transform cc and lev to int for each user
     const transformedUsers = users.map((user) => {
       return {
         _id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         createdAt: user.createdAt,
         option: user.option,
         status: user.status,

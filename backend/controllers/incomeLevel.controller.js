@@ -76,7 +76,7 @@ const getSingleLevel = async (req,res) => {
     const { id } = req.params; 
     const level = await IncomeLevel
      .findById(id)
-     
+     console.log(level)
 
     if (!level) {
       return res.status(404).json({ message: "Level not found" });

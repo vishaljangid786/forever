@@ -34,7 +34,7 @@ const AllUsers = ({ userData }) => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `${backendUrl}/api/user/fetchallusers2`,
+          `${backendUrl}/api/user/fetchallusers`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
