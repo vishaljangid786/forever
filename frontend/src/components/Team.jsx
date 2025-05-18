@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import NewFunction from "./NewFunction";
 
 const Team = ({ userData, token }) => {
   const [referredUsers, setReferredUsers] = useState([]);
@@ -315,8 +316,7 @@ const Team = ({ userData, token }) => {
       </div>
 
       {/* Indirect Team */}
-      <div className="mt-6">
-        {/* Indirect Users List */}
+      {/* <div className="mt-6">
         <button
           onClick={() => setIsOpen2(!isOpen2)}
           className="flex items-center justify-between w-full p-4 mt-4 bg-gray-200 rounded-lg">
@@ -405,7 +405,8 @@ const Team = ({ userData, token }) => {
             )}
           </div>
         )}
-      </div>
+      </div> */}
+      <NewFunction userData={userData} />
     </>
   );
 };
