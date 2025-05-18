@@ -730,7 +730,7 @@ const getOptionTeam = async (req, res) => {
     }
     const users = await userModel.find(filter);
 
-    res.status(200).json({ message: `Got ${option} team members`,member: users });
+    res.status(200).json({ message: `Got ${option} team members`, users });
   } catch (error) {
     console.error("getOptionTeam Error:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
@@ -1003,7 +1003,6 @@ const getCount = async (req, res) => {
     }
 
     const user = await userModel.findById(userId);
-    console.log(user);
     
     if (!user) {
       return res
@@ -1194,12 +1193,50 @@ const processStatusAndLevels = async () => {
   return { success: true };
 };
 
+const fetchReferralsRecursive = async (userId, level, results) => {
+  const referredUsers = await userModel.find({ referredBy: userId });
+
+  for (const user of referredUsers) {
+    results.push({ ...user._doc, level }); // Tag with level
+    await fetchReferralsRecursive(user._id, level + 1, results); // Recurse
+  }
+};
+
+// Entry function
+const newfunction = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    console.log("Starting referral tree from user:", userId);
+
+    const results = [];
+    await fetchReferralsRecursive(userId, 1, results); // Start at level 1
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Error building referral tree:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+const getReferralsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const referredUsers = await userModel.find({ referredBy: userId });
+    res.status(200).json(referredUsers);
+  } catch (error) {
+    console.error("Error fetching referred users:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 export {
   checkrefferalcode,
   getReferredUsers,
+  getReferralsByUserId,
   getCount,
   blockUser,
   updateuser,
+  newfunction,
   updateblockUser,
   updateProfile,
   fetchMultipleUsers,

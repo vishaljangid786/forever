@@ -25,6 +25,8 @@ import {
   getCount,
   updateProfile,
   fetchUserDataweb,
+  newfunction,
+  getReferralsByUserId,
 } from "../controllers/userController.js";
 import authUser from "../middleware/auth.js";
 
@@ -63,5 +65,8 @@ userRouter.put("/update", authUser, updateuser);
 userRouter.put("/updateprofile", authUser, updateProfile);
 // userRouter.post("/updateamount", authUser, updateamountthroughcc);
 userRouter.get("/referrals/:userId", getCount);
+userRouter.post("/newfunction",newfunction);
+userRouter.post("/get-referrals", getReferralsByUserId);
+
 
 export default userRouter;
