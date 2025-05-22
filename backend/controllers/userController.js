@@ -45,18 +45,18 @@ const sendOtp = async (req, res) => {
 
     // Send OTP via Email
     const mailOptions = {
-      from: `VK Marketing`,
+      from: `"VK Marketing" <vkallinmarketing@gmail.com>`,
       to: email,
-      subject: "🔐 Your OTP Code (Valid 5 Minutes)",
+      subject: "Your OTP Code from VK Marketing (Valid for 5 Minutes)",
       replyTo: "vkallinmarketing@gmail.com",
-      text: `Your OTP is: ${otp}`,
+      text: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
       html: `<div style="font-family: sans-serif;">
           <h2>Your OTP is: <span style="color: #2d89ef;">${otp}</span></h2>
           <p>This OTP is valid for 5 minutes. Please do not share it with anyone.</p>
           <br />
-          <small>VK Marketing, vkallinmarketing@gmail.com</small>
+          <p style="font-size: 12px; color: gray;">This is an automated message from VK Marketing. Do not reply.</p>
         </div>`,
-    };
+    };    
 
     // console.log(otp);
 
