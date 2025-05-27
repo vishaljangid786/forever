@@ -22,7 +22,6 @@ const transporter = nodemailer.createTransport({
 const sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
-    
     if (!email) {
       return res
         .status(400)
