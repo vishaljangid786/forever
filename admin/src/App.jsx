@@ -42,37 +42,54 @@ const App = () => {
       setUserData(null);
     }
   }, [token]);
+  
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken("");
+    setUserData(null);
+    toast.info("Logged out due to invalid session");
+  };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (token) {
-        try {
-          const response = await axios.get(
-            `${backendUrl}/api/user/fetchuserdata2`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
 
-          if (response.data.success) {
-            setUserData(response.data.user);
-          } else {
-            toast.error(response.data.message);
-            console.error("Failed to fetch user data:", response.data.message);
-            localStorage.removeItem("token");
-          }
-        } catch (error) {
-          console.error(
-            "Error fetching user data:",
-            error.response ? error.response.data.message : error.message
-          );
-          toast.error("Error fetching user data");
+useEffect(() => {
+  if (!token) return;
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(
+        `${backendUrl}/api/user/fetchuserdata2`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
-      }
-    };
+      );
 
-    fetchUserData();
-  }, [token]);
+      if (response.data.success) {
+        setUserData(response.data.user);
+      } else {
+        toast.error(response.data.message);
+        handleLogout();
+      }
+    } catch (error) {
+      const status = error.response?.status;
+      if (status === 401 || status === 403) {
+        toast.info("Session expired. Please log in again.");
+        handleLogout();
+      } else {
+        toast.error("Error fetching user data");
+      }
+    }
+  };
+
+  // Immediately fetch once
+  fetchUserData();
+
+  // Set interval to check every 5 minutes (or your choice)
+  const interval = setInterval(fetchUserData, 5 * 60 * 1000);
+
+  return () => clearInterval(interval);
+}, [token]);
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">

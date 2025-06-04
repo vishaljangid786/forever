@@ -222,9 +222,14 @@ const registerUser = async (req, res) => {
       referralCode !== "SELLER@SELLER"
     ) {
       const referringUser = await userModel.findOne({ referralCode });
-      if (referringUser) {
-        referredByUserId = referringUser._id;
+      if (!referringUser) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid referral code" });
       }
+
+      referredByUserId = referringUser._id;
+
     }
 
     // Creating a new user
