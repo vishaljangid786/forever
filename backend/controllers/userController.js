@@ -720,7 +720,7 @@ const getTeamMember = async (req, res) => {
 
 const getOptionTeam = async (req, res) => {
   try {
-    const { option } = req.body;
+    const { option } = req.query || req.body;
     const userId = req.user.userId || req.user.id;
 
     if (!["left", "right", "total"].includes(option)) {
