@@ -191,8 +191,8 @@ const removeProduct = async (req, res) => {
 // function for single product info
 const singleProduct = async (req, res) => {
   try {
-    const { productId } = req.body || req.params;
-    
+    const productId = req.body.productId || req.params.id || req.query.id || req.query.productId;
+    console.log("Fetching product with ID:", productId);
 
     if (!productId) {
       return res
@@ -200,19 +200,27 @@ const singleProduct = async (req, res) => {
         .json({ success: false, message: "Product ID is required" });
     }
 
-    const product = await productModel
-      .findById(productId)
-      .populate("createdBy", "name email location address");
+    // Attempt to find by ID
+    let product;
+    try {
+      product = await productModel
+        .findById(productId)
+        .populate("createdBy", "name email location address");
+    } catch (err) {
+      console.log("Invalid ID format or DB error:", err.message);
+    }
 
     if (!product) {
+      console.log("Product not found in DB for ID:", productId);
       return res
         .status(404)
         .json({ success: false, message: "Product not found" });
     }
+    console.log("Product found:", product.name);
     res.json({ success: true, product });
   } catch (error) {
     console.error("Error fetching product:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: "Server error: " + error.message });
   }
 };
 

@@ -142,7 +142,7 @@ const removeFromCart = async (req, res) => {
 
     // Remove item from cart
     cart.items = cart.items.filter(
-      (item) => item._id.toString() !== productId
+      (item) => item._id.toString() !== productId && item.productId.toString() !== productId
     );
 
     await cart.save();
