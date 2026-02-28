@@ -49,8 +49,10 @@ productRouter.post(
   addProduct
 );
 productRouter.delete("/remove/:id", removeProduct);
+productRouter.get("/single/:id", singleProduct);
 productRouter.post("/single", singleProduct);
 productRouter.post("/single/:id", singleProduct);
+productRouter.get("/single", singleProduct);
 productRouter.get("/list", listProducts);
 productRouter.get("/fetchcategories", fetchcategory);
 productRouter.post("/addReview", addReview);
