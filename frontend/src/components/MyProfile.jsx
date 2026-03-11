@@ -83,14 +83,14 @@ const MyProfile = () => {
   };
 
   return (
-    <div className="max-w-5xl p-2 mx-auto sm:p-6">
+    <div className="max-w-5xl p-2 mx-auto sm:p-6 bg-white dark:bg-gray-900">
       {userData ? (
         <>
           {/* Profile Header */}
-          <div className="flex items-center justify-between py-6 border-b">
+          <div className="flex items-center justify-between py-6 border-b dark:border-gray-700">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">My Profile</h1>
-              <p className="text-sm text-gray-600">
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">My Profile</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Welcome back, {userData.name}!
               </p>
             </div>
@@ -100,8 +100,8 @@ const MyProfile = () => {
               Logout
             </button>
           </div>
-          <div className="px-4 py-2 mt-3 text-xl border rounded">
-            <p className="font-bold text-gray-700">
+          <div className="px-4 py-2 mt-3 text-xl border rounded bg-gray-50 dark:bg-gray-800 dark:border-gray-600">
+            <p className="font-bold text-gray-700 dark:text-gray-300">
               Your Uid: <span className="font-normal">{userData.uid}</span>
             </p>
           </div>
@@ -110,15 +110,15 @@ const MyProfile = () => {
           {level?.name && (
             <div className="my-4">
               <h2 className="text-xl font-semibold">Your Current Level:</h2>
-              <p className="text-gray-700">{level.name}</p>
+              <p className="text-gray-700 dark:text-gray-300">{level.name}</p>
             </div>
           )}
 
           {/* Referral Code */}
-          <div className="flex items-center justify-between p-4 my-4 bg-white rounded shadow">
+          <div className="flex items-center justify-between p-4 my-4 bg-white dark:bg-gray-800 rounded shadow">
             <div>
               <h3 className="text-lg font-semibold">Referral Code</h3>
-              <p className="text-gray-700">{userData.referralCode}</p>
+              <p className="text-gray-700 dark:text-gray-300">{userData.referralCode}</p>
             </div>
             <button
               className="px-4 py-2 font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
@@ -132,12 +132,12 @@ const MyProfile = () => {
           </div>
 
           {/* Profile Info */}
-          <div className="p-4 my-6 rounded shadow bg-gray-50">
+          <div className="p-4 my-6 rounded shadow bg-gray-50 dark:bg-gray-800">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Profile Details</h2>
+              <h2 className="text-xl font-bold dark:text-gray-200">Profile Details</h2>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="text-sm font-medium text-blue-600 hover:underline">
+                className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
                 {isEditing ? "Cancel" : "Edit Profile"}
               </button>
             </div>
@@ -146,7 +146,7 @@ const MyProfile = () => {
               <div>
                 {["name", "phone", "location"].map((field) => (
                   <div key={field} className="flex items-center gap-2">
-                    <label className="block font-medium text-gray-700 capitalize">
+                    <label className="block font-medium text-gray-700 dark:text-gray-300 capitalize">
                       {field} {!isEditing && ":"}
                     </label>
                     {isEditing ? (
@@ -155,10 +155,10 @@ const MyProfile = () => {
                         name={field}
                         value={editData[field] || ""}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 mt-1 border rounded"
+                        className="w-full px-3 py-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
                       />
                     ) : (
-                      <p className="text-gray-800">{userData[field]}</p>
+                      <p className="text-gray-800 dark:text-gray-200">{userData[field]}</p>
                     )}
                   </div>
                 ))}
@@ -170,13 +170,13 @@ const MyProfile = () => {
                   <label className="block font-medium text-gray-700 capitalize">
                     Email :
                   </label>
-                  <p className="text-gray-800">{userData.email}</p>
+                  <p className="text-gray-800 dark:text-gray-200">{userData.email}</p>
                 </div>
               )}
 
               {/* Address */}
               <div>
-                <label className="block font-medium text-gray-700">
+                <label className="block font-medium text-gray-700 dark:text-gray-300">
                   Address
                 </label>
                 {["street", "city", "state", "country", "zipcode"].map(
@@ -189,10 +189,10 @@ const MyProfile = () => {
                           placeholder={field}
                           value={editData?.address?.[field] || ""}
                           onChange={handleAddressChange}
-                          className="w-full px-3 py-2 mt-1 border rounded"
+                          className="w-full px-3 py-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
                         />
                       ) : (
-                        <p className="text-gray-800">
+                        <p className="text-gray-800 dark:text-gray-200">
                           <span className="capitalize">{field}:</span>{" "}
                           {userData?.address?.[field] || "-"}
                         </p>

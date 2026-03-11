@@ -26,7 +26,7 @@ const CompanyPolicy = () => {
         <p className="text-lg text-gray-600 mb-6">We prioritize employee safety and require compliance with all safety procedures and guidelines.</p>
         
         <div className="mt-10 text-center">
-          <p className="text-lg text-gray-600">For any questions regarding our company policies, please contact us at <span className="text-blue-600 font-medium">vkallinmarketing@gmail.com</span>.</p>
+          <p className="text-lg text-gray-600">For any questions regarding our company policies, please contact us at <span className="text-blue-600 font-medium">vjallinmarketing@gmail.com</span>.</p>
         </div>
       </div>
     </div>

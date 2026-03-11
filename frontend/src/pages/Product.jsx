@@ -116,12 +116,22 @@ const renderStars = () => {
 
   const colors = productData?.color;
   const sizeIndex = productData?.sizes?.indexOf(size);
-  const currentPrice =
-    sizeIndex !== -1 ? Number(productData?.price[0]?.split(",")[sizeIndex]) : 0;
-  const oldPrice =
-    sizeIndex !== -1
-      ? Number(productData?.oldPrice[0]?.split(",")[sizeIndex])
-      : 0;
+  // helper that can interpret either number arrays or comma-separated strings
+  const parsePrice = (arr, idx) => {
+    if (!arr || idx < 0) return 0;
+    const first = arr[0];
+    if (typeof first === "string") {
+      const parts = first.split(",");
+      return Number(parts[idx] ?? parts[0] ?? 0);
+    } else if (typeof first === "number") {
+      // if numeric array just use the value at index or fallback to first entry
+      return Number(arr[idx] ?? first ?? 0);
+    }
+    return 0;
+  };
+
+  const currentPrice = sizeIndex !== -1 ? parsePrice(productData?.price, sizeIndex) : 0;
+  const oldPrice = sizeIndex !== -1 ? parsePrice(productData?.oldPrice, sizeIndex) : 0;
 
   return productData ? (
     <div className="z-0 pt-10 border-t-2">

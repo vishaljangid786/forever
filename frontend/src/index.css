@@ -1,34 +1,182 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Prata&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Prata&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-a.active hr{
-    display: block;
+/* Base Styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  html.dark {
+    @apply bg-slate-950;
+    color-scheme: dark;
+  }
+
+  html.dark body {
+    @apply bg-slate-950 text-slate-100;
+  }
+
+  body {
+    @apply font-outfit bg-white text-slate-900;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  button {
+    @apply transition-all duration-200;
+  }
 }
 
-*{
-    font-family: Outfit;
-}
-
+/* Typography */
 .prata-regular {
-    font-family: "Prata", serif;
-    font-weight: 400;
-    font-style: normal;
+  font-family: "Prata", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.font-outfit {
+  font-family: Outfit;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Headings */
+@layer components {
+  .heading-1 {
+    @apply text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight;
   }
 
-  .log{
-    font-family: 'Times New Roman', Times, serif;
+  .heading-2 {
+    @apply text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight;
   }
 
-  ::-webkit-scrollbar{
-    display: none;
+  .heading-3 {
+    @apply text-2xl sm:text-3xl font-bold tracking-tight;
   }
-  
-  @media (max-width:640px) {
-    a.active{
-        background-color: black;
-        color: white;
-    }
+
+  .heading-4 {
+    @apply text-xl sm:text-2xl font-semibold;
   }
+
+  .text-muted {
+    @apply text-slate-600 dark:text-slate-400;
+  }
+
+  .text-muted-dark {
+    @apply text-slate-700 dark:text-slate-300;
+  }
+}
+
+/* Active Links */
+a.active hr {
+  display: block;
+}
+
+@media (max-width: 640px) {
+  a.active {
+    @apply bg-black text-white dark:bg-white dark:text-black;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth Transitions */
+* {
+  font-family: Outfit;
+}
+
+.log {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* Dark Mode Specific Styles */
+@layer base {
+  html.dark {
+    @apply bg-gradient-to-b from-slate-950 to-slate-900;
+  }
+
+  html.dark body {
+    @apply bg-gradient-to-b from-slate-950 to-slate-900 text-slate-100;
+  }
+}
+
+/* Smooth animations for page transitions */
+@layer components {
+  .fade-in {
+    @apply animate-slideUp;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg-alt hover:-translate-y-1;
+  }
+
+  .btn-primary {
+    @apply px-6 py-2.5 bg-gradient-primary text-white font-semibold rounded-lg shadow-md hover:shadow-lg-alt transition-all duration-200 hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-semibold rounded-lg shadow-md hover:shadow-lg-alt transition-all duration-200;
+  }
+
+  .card-base {
+    @apply bg-white dark:bg-slate-800 rounded-xl shadow-md-alt border border-slate-100 dark:border-slate-700 transition-all duration-300;
+  }
+
+  .input-base {
+    @apply w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+  }
+}
+
+/* Link Styles */
+@layer components {
+  .link-hover {
+    @apply relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary-500 after:transition-all after:duration-300 hover:after:w-full;
+  }
+
+  .link-subtle {
+    @apply text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200;
+  }
+}
+
+/* Badge Styles */
+@layer components {
+  .badge-primary {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-200;
+  }
+
+  .badge-success {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-200;
+  }
+
+  .badge-warning {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-200;
+  }
+}
+
+/* Gradient Text (fallback to solid color for readability) */
+.text-gradient-primary {
+  /* use a solid primary color so it remains legible on any background */
+  @apply text-primary-600 dark:text-primary-400 font-bold;
+}
+
+/* If you still want a gradient effect in limited places, add a separate class:
+   .text-gradient-effect {
+     @apply bg-gradient-primary bg-clip-text text-transparent;
+   }
+*/
+
+/* Loader Animation */
+.loader {
+  @apply w-12 h-12 border-4 border-slate-200 dark:border-slate-700 border-t-primary-500 rounded-full animate-spin;
+}

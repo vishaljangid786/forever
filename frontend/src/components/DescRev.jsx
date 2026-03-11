@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-const DescRev = ({ description, productId,setReviews ,reviews, setAverageRating}) => {
+const DescRev = ({ description, productId, setReviews, reviews, setAverageRating }) => {
   const [selectedTab, setSelectedTab] = useState("description");
   const [newReview, setNewReview] = useState("");
   const [newRating, setNewRating] = useState(5);
@@ -56,9 +56,11 @@ const DescRev = ({ description, productId,setReviews ,reviews, setAverageRating}
           fetchReviews(); // Fetch updated reviews
           setNewReview("");
           setNewRating(5);
+          toast.success("Review added successfully!");
         }
       } catch (error) {
         console.error("Error adding review:", error);
+        toast.error("Failed to add review");
       }
     }
   };
@@ -74,95 +76,136 @@ const DescRev = ({ description, productId,setReviews ,reviews, setAverageRating}
   };
 
   return (
-    <div className="mt-20">
+    <div className="mt-20 mb-10">
       {/* Tab buttons */}
-      <div className="flex">
-        <b
+      <div className="flex border-b border-slate-200 dark:border-slate-700">
+        <button
           onClick={() => setSelectedTab("description")}
-          className={`px-5 py-3 text-sm border cursor-pointer  ${
-            selectedTab === "description" ? "bg-gray-200" : ""
+          className={`px-6 py-4 text-sm font-semibold transition-all duration-300 border-b-2 ${
+            selectedTab === "description"
+              ? "border-rose-500 text-rose-600 dark:text-rose-400"
+              : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
           }`}>
           Description
-        </b>
-        <p
+        </button>
+        <button
           onClick={() => setSelectedTab("reviews")}
-          className={`px-5 py-3 text-sm border cursor-pointer ${
-            selectedTab === "reviews" ? "bg-gray-200" : ""
+          className={`px-6 py-4 text-sm font-semibold transition-all duration-300 border-b-2 ${
+            selectedTab === "reviews"
+              ? "border-rose-500 text-rose-600 dark:text-rose-400"
+              : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
           }`}>
           Reviews ({reviews.length})
-        </p>
+        </button>
       </div>
 
       {/* Dynamic Content */}
-      <div className="flex flex-col gap-4 px-6 py-6 text-sm text-gray-500 border">
+      <div className="flex flex-col gap-4 px-6 py-8 min-h-96 bg-white dark:bg-slate-800 rounded-b-lg border-l border-r border-b border-slate-200 dark:border-slate-700">
         {selectedTab === "description" ? (
-          <p className="whitespace-pre-line">{description}</p>
+          <div>
+            <p className="text-base text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed">
+              {description}
+            </p>
+          </div>
         ) : (
-          <div className="py-4 mt-4">
+          <div className="py-4">
             {/* Reviews List */}
-            <div className="overflow-x-auto">
-              <div className="flex space-x-6">
-                {reviews.length > 0 ? (
-                  reviews.map((review, index) => (
-                    <div
-                      key={index}
-                      className="inline-block w-64 cursor-pointer max-w-[300px] p-4 bg-gray-200 rounded-lg shadow-md"
-                      onClick={() => openReviewModal(review)}>
-                      <p
-                        className="overflow-hidden text-sm text-gray-700 break-words text-ellipsis"
-                        style={{
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}>
-                        {review.comment}
-                      </p>
-                      <div className="flex items-center mt-2">
-                        {[...Array(5)].map((_, i) => (
-                          <span
-                            key={i}
-                            className={
-                              i < review.rating
-                                ? "text-yellow-500"
-                                : "text-gray-400"
-                            }>
-                            ★
+            <div className="mb-8">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
+                Customer Reviews
+              </h3>
+              <div className="overflow-x-auto pb-4">
+                <div className="flex gap-4">
+                  {reviews.length > 0 ? (
+                    reviews.map((review, index) => (
+                      <div
+                        key={index}
+                        onClick={() => openReviewModal(review)}
+                        className="flex-shrink-0 w-72 p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer border border-slate-200 dark:border-slate-600 hover:border-rose-400 dark:hover:border-rose-500">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <span
+                                key={i}
+                                className={
+                                  i < review.rating
+                                    ? "text-yellow-400 text-lg"
+                                    : "text-slate-300 dark:text-slate-500 text-lg"
+                                }>
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                          <span className="text-xs text-slate-500 dark:text-slate-400">
+                            {new Date(review.date).toLocaleDateString()}
                           </span>
-                        ))}
+                        </div>
+                        <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-3 leading-relaxed">
+                          {review.comment}
+                        </p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                          By {review.user}
+                        </p>
                       </div>
+                    ))
+                  ) : (
+                    <div className="w-full py-8 text-center">
+                      <p className="text-slate-500 dark:text-slate-400 text-base">
+                        No reviews yet. Be the first to review!
+                      </p>
                     </div>
-                  ))
-                ) : (
-                  <p>No reviews yet.</p>
-                )}
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Add New Review */}
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold">Add a New Review</h3>
+            <div className="border-t border-slate-200 dark:border-slate-700 pt-8">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
+                Write Your Review
+              </h3>
               <textarea
-                className="w-full p-2 mt-2 border border-gray-300 rounded-md"
-                placeholder="Write your review..."
+                className="w-full p-4 mb-4 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-rose-500 dark:focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 transition-all duration-300"
+                placeholder="Share your experience with this product..."
                 value={newReview}
                 onChange={(e) => setNewReview(e.target.value)}
+                rows="4"
               />
-              <div className="flex items-center mt-2">
-                <span className="mr-3">Select Rating: </span>
-                {[...Array(5)].map((_, i) => (
-                  <span
-                    key={i}
-                    className={`cursor-pointer ${
-                      i < newRating ? "text-yellow-500" : "text-gray-400"
-                    }`}
-                    onClick={() => setNewRating(i + 1)}>
-                    ★
+
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    Rating:
                   </span>
-                ))}
+                  <div className="flex gap-2">
+                    {[...Array(5)].map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setNewRating(i + 1)}
+                        className={`text-2xl transition-all duration-200 transform hover:scale-110 ${
+                          i < newRating
+                            ? "text-yellow-400"
+                            : "text-slate-300 dark:text-slate-600"
+                        }`}>
+                        ★
+                      </button>
+                    ))}
+                  </div>
+                  <span className="text-sm text-slate-500 dark:text-slate-400">
+                    {newRating} of 5
+                  </span>
+                </div>
               </div>
+
               <button
-                className="p-2 mt-4 text-white bg-blue-500 rounded-lg"
-                onClick={handleNewReviewSubmit}>
+                onClick={handleNewReviewSubmit}
+                disabled={!newReview.trim()}
+                className={`w-full sm:w-auto px-8 py-3 font-semibold rounded-lg transition-all duration-300 transform ${
+                  newReview.trim()
+                    ? "bg-gradient-to-r from-rose-500 to-pink-500 dark:from-rose-600 dark:to-pink-600 text-white hover:shadow-lg hover:scale-105 active:scale-95"
+                    : "bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 cursor-not-allowed"
+                }`}>
                 Submit Review
               </button>
             </div>
@@ -172,28 +215,62 @@ const DescRev = ({ description, productId,setReviews ,reviews, setAverageRating}
 
       {/* Modal for displaying the full review */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative p-6 bg-white rounded-lg shadow-lg w-80">
-            <h3 className="mb-4 text-lg font-semibold">Full Review</h3>
-            <p className="text-sm text-gray-700">{selectedReview?.comment}</p>
-            <div className="flex items-center mt-2">
-              {[...Array(5)].map((_, i) => (
-                <span
-                  key={i}
-                  className={
-                    i < selectedReview?.rating
-                      ? "text-yellow-500"
-                      : "text-gray-400"
-                  }>
-                  ★
-                </span>
-              ))}
-            </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/70 p-4">
+          <div className="relative w-full max-w-md p-8 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700">
+            {/* Close Button */}
             <button
               onClick={closeModal}
-              className="absolute top-0 right-0 p-2 transition border-2 cursor-pointer rounded-tr-md hover:border-red-500 hover:text-white hover:bg-red-500 rounded-bl-md">
-              ✖
+              className="absolute top-4 right-4 p-2 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all duration-200">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
             </button>
+
+            {/* Header */}
+            <div className="mb-4 pr-8">
+              <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                Review by {selectedReview?.user}
+              </p>
+              <div className="flex items-center gap-2 mt-2">
+                {[...Array(5)].map((_, i) => (
+                  <span
+                    key={i}
+                    className={
+                      i < selectedReview?.rating
+                        ? "text-yellow-400 text-lg"
+                        : "text-slate-300 dark:text-slate-600 text-lg"
+                    }>
+                    ★
+                  </span>
+                ))}
+                <span className="text-sm text-slate-500 dark:text-slate-400 ml-2">
+                  {new Date(selectedReview?.date).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+
+            {/* Review Text */}
+            <p className="text-base text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
+              {selectedReview?.comment}
+            </p>
+
+            {/* Footer */}
+            <div className="flex gap-2 mt-6">
+              <button
+                onClick={closeModal}
+                className="flex-1 px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95">
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

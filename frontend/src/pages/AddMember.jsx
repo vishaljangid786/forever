@@ -195,9 +195,9 @@ const AddMember = ({ userData }) => {
   }, [timer, otpSent]);
 
   return (
-    <div className="max-w-lg p-6 mx-auto mt-10 bg-white rounded-lg shadow-lg">
-      <h2 className="mb-4 text-xl font-bold">Signup Form</h2>
-      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+    <div className="max-w-lg p-6 mx-auto mt-10 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+      <h2 className="mb-4 text-xl font-bold dark:text-gray-200">Signup Form</h2>
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-4">
         <div
           className="bg-black h-2.5 rounded-full transition-all duration-300"
           style={{ width: `${progress}%` }}></div>
@@ -207,15 +207,15 @@ const AddMember = ({ userData }) => {
         {/* Step 1 */}
         {step === 1 && (
           <div>
-            <label className="block">Full Name</label>
+            <label className="block dark:text-gray-200">Full Name</label>
             <input
               {...register("name", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
               placeholder="Enter Your Full Name"
             />
-            {errors.name && <p className="text-red-500">Name is required</p>}
-            <label className="block mt-4">Referral Code</label>
-            <div className="flex gap-2 p-2 border rounded">
+            {errors.name && <p className="text-red-500 dark:text-red-400">Name is required</p>} 
+            <label className="block mt-4 dark:text-gray-200">Referral Code</label>
+            <div className="flex gap-2 p-2 border rounded bg-white dark:bg-gray-700 dark:border-gray-600">
               <input
                 {...register("referralCode")}
                 className="w-full outline-none"
@@ -240,40 +240,40 @@ const AddMember = ({ userData }) => {
               )}
             </div>
             {errors.referralCode && (
-              <p className="text-red-500">Refferal Code is Required</p>
+              <p className="text-red-500 dark:text-red-400">Refferal Code is Required</p>
             )}
 
-            <label className="block mt-4">Option</label>
+            <label className="block mt-4 dark:text-gray-200">Option</label>
             <select
               {...register("option", { required: true })}
-              className="w-full p-2 mt-1 border rounded outline-none">
+              className="w-full p-2 mt-1 border rounded outline-none bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600">
               <option value="">Select an option</option>
               <option value="left">Left</option>
               <option value="right">Right</option>
             </select>
             {errors.option && (
-              <p className="text-red-500">Option is required</p>
+              <p className="text-red-500 dark:text-red-400">Option is required</p>
             )}
 
             {refferalapply && (
               <div>
-                <label className="block mt-4">Shop Name</label>
+                <label className="block mt-4 dark:text-gray-200">Shop Name</label>
                 <input
                   {...register("shopName", { required: true })}
-                  className="w-full p-2 mt-1 border rounded"
+                  className="w-full p-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
                   placeholder="Enter your shop name"
                 />
                 {errors.shopName && (
-                  <p className="text-red-500">Shop Name is required</p>
+                  <p className="text-red-500 dark:text-red-400">Shop Name is required</p>
                 )}
               </div>
             )}
 
-            <label className="block mt-4">Email</label>
+            <label className="block mt-4 dark:text-gray-200">Email</label>
             <div className="flex">
               <input
                 {...register("email", { required: true })}
-                className="w-full p-2 mt-1 border rounded"
+                className="w-full p-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
                 placeholder="Enter your email"
                 type="email"
                 readOnly={otpSent}
@@ -288,17 +288,17 @@ const AddMember = ({ userData }) => {
                 {otpSent ? `Sent (${timer}s)` : "Send OTP"}
               </button>
             </div>
-            {errors.email && <p className="text-red-500">Email is required</p>}
-            <p className="mt-2 text-sm text-gray-500">
+            {errors.email && <p className="text-red-500 dark:text-red-400">Email is required</p>}
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               Check all inboxes and spam folder also for Otp, if not found.
             </p>
 
             {otpSent && (
               <>
-                <label className="block mt-4">Enter OTP</label>
+                <label className="block mt-4 dark:text-gray-200">Enter OTP</label>
                 <div className="flex">
                   <input
-                    className="w-full p-2 mt-1 border rounded"
+                    className="w-full p-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
                     placeholder="Enter OTP"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
@@ -324,11 +324,11 @@ const AddMember = ({ userData }) => {
         {/* Step 2 */}
         {step === 2 && (
           <div>
-            <label className="block mt-4">Password</label>
+            <label className="block mt-4 dark:text-gray-200">Password</label>
             <div className="relative">
               <input
                 {...register("password", { required: true })}
-                className="w-full p-2 pr-10 mt-1 border rounded"
+                className="w-full p-2 pr-10 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
                 placeholder="Enter your password"
                 type={showPassword ? "text" : "password"}
               />
@@ -345,11 +345,11 @@ const AddMember = ({ userData }) => {
             </div>
 
             {/* Confirm Password Field */}
-            <label className="block mt-4">Confirm Password</label>
+            <label className="block mt-4 dark:text-gray-200">Confirm Password</label>
             <div className="relative">
               <input
                 {...register("confirmPassword", { required: true })}
-                className="w-full p-2 pr-10 mt-1 border rounded"
+                className="w-full p-2 pr-10 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
                 placeholder="Confirm your password"
                 type={showConfirmPassword ? "text" : "password"}
               />
@@ -364,10 +364,10 @@ const AddMember = ({ userData }) => {
                 )}
               </button>
             </div>
-            <label className="block mt-4">Phone Number</label>
+            <label className="block mt-4 dark:text-gray-200">Phone Number</label>
             <input
               {...register("phone", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
               placeholder="Phone Number"
               type="number"
             />
@@ -377,55 +377,55 @@ const AddMember = ({ userData }) => {
         {/* Step 4 - Address */}
         {step === 3 && (
           <div>
-            <label className="block">Street</label>
+            <label className="block dark:text-gray-200">Street</label>
             <input
               {...register("address.street", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
               placeholder="Enter your street"
             />
             {errors.address?.street && (
-              <p className="text-red-500">Street is required</p>
+              <p className="text-red-500 dark:text-red-400">Street is required</p>
             )}
 
-            <label className="block mt-4">City</label>
+            <label className="block mt-4 dark:text-gray-200">City</label>
             <input
               {...register("address.city", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
               placeholder="Enter your city"
             />
             {errors.address?.city && (
-              <p className="text-red-500">City is required</p>
+              <p className="text-red-500 dark:text-red-400">City is required</p>
             )}
 
-            <label className="block mt-4">State</label>
+            <label className="block mt-4 dark:text-gray-200">State</label>
             <input
               {...register("address.state", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
               placeholder="Enter your state"
             />
             {errors.address?.state && (
-              <p className="text-red-500">State is required</p>
+              <p className="text-red-500 dark:text-red-400">State is required</p>
             )}
 
-            <label className="block mt-4">Country</label>
+            <label className="block mt-4 dark:text-gray-200">Country</label>
             <input
               {...register("address.country", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
               placeholder="Enter your country"
             />
             {errors.address?.country && (
-              <p className="text-red-500">Country is required</p>
+              <p className="text-red-500 dark:text-red-400">Country is required</p>
             )}
 
-            <label className="block mt-4">Zipcode</label>
+            <label className="block mt-4 dark:text-gray-200">Zipcode</label>
             <input
               {...register("address.zipcode", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
               placeholder="Enter your zipcode"
               type="number"
             />
             {errors.address?.zipcode && (
-              <p className="text-red-500">Zipcode is required</p>
+              <p className="text-red-500 dark:text-red-400">Zipcode is required</p>
             )}
             <div className="flex items-start mt-4">
               <input

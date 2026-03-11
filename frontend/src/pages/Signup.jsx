@@ -186,11 +186,11 @@ const Signup = () => {
   };
 
   return (
-    <div className="max-w-lg p-6 mx-auto mt-10 bg-white rounded-lg shadow-lg">
-      <h2 className="mb-4 text-xl font-bold">Signup Form</h2>
-      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+    <div className="max-w-lg p-6 mx-auto mt-10 bg-white rounded-lg shadow-lg dark:bg-slate-800 dark:text-gray-200">
+      <h2 className="mb-4 text-xl font-bold dark:text-white">Signup Form</h2>
+      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-slate-700">
         <div
-          className="bg-black h-2.5 rounded-full transition-all duration-300"
+          className="bg-black h-2.5 rounded-full transition-all duration-300 dark:bg-primary-500"
           style={{ width: `${progress}%` }}></div>
       </div>
 
@@ -201,21 +201,21 @@ const Signup = () => {
             <label className="block">Full Name</label>
             <input
               {...register("name", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
               placeholder="Enter Your Full Name"
             />
             {errors.name && <p className="text-red-500">Name is required</p>}
             <label className="block mt-4">Referral Code</label>
-            <div className="flex gap-2 p-2 border rounded">
+            <div className="flex gap-2 p-2 border rounded border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800">
               <input
                 {...register("referralCode")}
-                className="w-full outline-none"
+                className="w-full outline-none bg-transparent text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Enter Referral Code"
                 required
               />
               {valid === false && (
                 <button
-                  className="text-blue-500"
+                  className="text-blue-500 dark:text-blue-400"
                   onClick={(e) => handleReferralApply(e)}>
                   Apply
                 </button>
@@ -236,7 +236,7 @@ const Signup = () => {
             <label className="block mt-4">Option</label>
             <select
               {...register("option", { required: true })}
-              className="w-full p-2 mt-1 border rounded outline-none">
+              className="w-full p-2 mt-1 border rounded outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600">
               <option value="">Select an option</option>
               <option value="left">Left</option>
               <option value="right">Right</option>
@@ -250,7 +250,7 @@ const Signup = () => {
                 <label className="block mt-4">Shop Name</label>
                 <input
                   {...register("shopName", { required: true })}
-                  className="w-full p-2 mt-1 border rounded"
+                  className="w-full p-2 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
                   placeholder="Enter your shop name"
                 />
                 {errors.shopName && (
@@ -263,14 +263,14 @@ const Signup = () => {
             <div className="flex">
               <input
                 {...register("email", { required: true })}
-                className="w-full p-2 mt-1 border rounded"
+                className="w-full p-2 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
                 placeholder="Enter your email"
                 type="email"
               />
               <button
                 type="button"
                 className={`w-full max-w-[100px] p-2 ml-2 text-white rounded ${
-                  otpSent ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500"
+                  otpSent ? "bg-gray-400 cursor-not-allowed dark:bg-gray-600" : "bg-blue-500 dark:bg-blue-600"
                 }`}
                 onClick={handleSendOtp}
                 disabled={otpSent}>
@@ -287,7 +287,7 @@ const Signup = () => {
                 <label className="block mt-4">Enter OTP</label>
                 <div className="flex">
                   <input
-                    className="w-full p-2 mt-1 border rounded"
+                    className="w-full p-2 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
                     placeholder="Enter OTP"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
@@ -317,13 +317,13 @@ const Signup = () => {
             <div className="relative">
               <input
                 {...register("password", { required: true })}
-                className="w-full p-2 pr-10 mt-1 border rounded"
+                className="w-full p-2 pr-10 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
                 placeholder="Enter your password"
                 type={showPassword ? "text" : "password"}
               />
               <button
                 type="button"
-                className="absolute text-gray-600 right-3 top-4"
+                className="absolute text-gray-600 dark:text-gray-300 right-3 top-4"
                 onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? (
                   <i className="fa-solid fa-eye-slash"></i>
@@ -338,13 +338,13 @@ const Signup = () => {
             <div className="relative">
               <input
                 {...register("confirmPassword", { required: true })}
-                className="w-full p-2 pr-10 mt-1 border rounded"
+                className="w-full p-2 pr-10 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
                 placeholder="Confirm your password"
                 type={showConfirmPassword ? "text" : "password"}
               />
               <button
                 type="button"
-                className="absolute text-gray-600 right-3 top-3"
+                className="absolute text-gray-600 dark:text-gray-300 right-3 top-3"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                 {showConfirmPassword ? (
                   <i className="fa-solid fa-eye-slash"></i>
@@ -356,7 +356,7 @@ const Signup = () => {
             <label className="block mt-4">Phone Number</label>
             <input
               {...register("phone", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
               placeholder="Phone Number"
               type="number"
             />
@@ -369,7 +369,7 @@ const Signup = () => {
             <label className="block">Street</label>
             <input
               {...register("address.street", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
               placeholder="Enter your street"
             />
             {errors.address?.street && (
@@ -379,7 +379,7 @@ const Signup = () => {
             <label className="block mt-4">City</label>
             <input
               {...register("address.city", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
               placeholder="Enter your city"
             />
             {errors.address?.city && (
@@ -389,7 +389,7 @@ const Signup = () => {
             <label className="block mt-4">State</label>
             <input
               {...register("address.state", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
               placeholder="Enter your state"
             />
             {errors.address?.state && (
@@ -399,7 +399,7 @@ const Signup = () => {
             <label className="block mt-4">Country</label>
             <input
               {...register("address.country", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
               placeholder="Enter your country"
             />
             {errors.address?.country && (
@@ -409,7 +409,7 @@ const Signup = () => {
             <label className="block mt-4">Zipcode</label>
             <input
               {...register("address.zipcode", { required: true })}
-              className="w-full p-2 mt-1 border rounded"
+              className="w-full p-2 mt-1 border rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 dark:border-slate-600"
               placeholder="Enter your zipcode"
               type="number"
             />
@@ -440,7 +440,7 @@ const Signup = () => {
             )}
           </div>
         )}
-        <Link to="/login" className="w-full text-sm text-right underline">
+        <Link to="/login" className="w-full text-sm text-right underline text-gray-700 dark:text-gray-200">
           Login Instead
         </Link>
         {/* Buttons */}
@@ -449,7 +449,7 @@ const Signup = () => {
             <button
               type="button"
               onClick={handleBack}
-              className="px-10 py-2 bg-gray-300">
+              className="px-10 py-2 bg-gray-300 dark:bg-slate-600 dark:text-gray-200">
               Back
             </button>
           )}
@@ -457,13 +457,13 @@ const Signup = () => {
             <button
               type="button"
               onClick={handleNext}
-              className="px-10 py-2 text-white bg-black">
+              className="px-10 py-2 text-white bg-black dark:bg-primary-500">
               Next
             </button>
           ) : (
             <button
               type="submit"
-              className="px-4 py-2 text-white bg-green-500 rounded">
+              className="px-4 py-2 text-white bg-green-500 dark:bg-green-600 rounded">
               Submit
             </button>
           )}

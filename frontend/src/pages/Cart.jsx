@@ -4,6 +4,7 @@ import Title from "../components/Title";
 import { useNavigate } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import Loading from "../components/Loading";
+import { ThemeContext } from "../context/ThemeContext";
 
 const Cart = () => {
   const {
@@ -18,6 +19,7 @@ const Cart = () => {
 
   const navigate = useNavigate();
   const [cartData, setCartData] = useState([]);
+  const {isDark} = useContext(ThemeContext)
 
   useEffect(() => {
     if (products.length > 0) {
@@ -59,13 +61,13 @@ const Cart = () => {
   if (cartData.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center w-full h-1/2">
-        <div className="p-6 text-center bg-white rounded-lg shadow-lg">
+        <div className={`p-6  my-20 text-center ${isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-700'} rounded-lg shadow-lg`}>
           <img
             src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png"
             alt="Empty Cart"
             className="w-32 mx-auto"
           />
-          <p className="mt-4 text-2xl font-semibold text-gray-700">
+          <p className={`mt-4 text-2xl font-semibold ${isDark ? 'text-white' : 'text-gray-700'} `}>
             Your cart is empty!
           </p>
           <p className="mt-2 text-gray-500">

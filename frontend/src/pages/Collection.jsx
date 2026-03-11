@@ -6,7 +6,7 @@ import ProductItem from "../components/ProductItem";
 import axios from "axios"; 
 
 const Collection = () => {
-  const { products, search, showSearch } = useContext(ShopContext);
+  const { products, search, showSearch, productsLoading } = useContext(ShopContext);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
@@ -121,7 +121,7 @@ const Collection = () => {
   
 
   return (
-    <div className="flex flex-col gap-1 pt-10 border-t sm:flex-row sm:gap-10">
+    <div className="flex flex-col gap-1 pt-10 sm:flex-row sm:gap-10">
       {/* Filter Options */}
       <div className="min-w-60">
         <p
@@ -232,6 +232,24 @@ const Collection = () => {
     </select>
   </div>
 
+  {/* Loading Indicator */}
+  {productsLoading && (
+    <div className="py-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {Array(12).fill(null).map((_, index) => (
+          <div key={index} className='animate-pulse'>
+            <div className='bg-gray-300 dark:bg-gray-700 w-full aspect-square rounded-lg mb-3'></div>
+            <div className='bg-gray-200 dark:bg-gray-600 h-4 w-3/4 rounded mb-2'></div>
+            <div className='bg-gray-200 dark:bg-gray-600 h-4 w-1/2 rounded'></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {/* Product Categories Section - Only show when not loading */}
+  {!productsLoading && (
+    <>
   {/* Categories with 8 or more products */}
   {categoriesList?.map((category, categoryIndex) => {
     // Filter products by category
@@ -323,6 +341,8 @@ const Collection = () => {
       return null;
     })}
   </div>
+    </>
+  )}
 </div>
 
     </div>
