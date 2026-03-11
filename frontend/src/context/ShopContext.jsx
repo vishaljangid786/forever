@@ -17,6 +17,7 @@ const ShopContextProvider = ({ children }) => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(true);
 
   const fetchUserData = async () => {
     try {
@@ -181,6 +182,7 @@ const ShopContextProvider = ({ children }) => {
 
   const getProductsData = async () => {
     try {
+      setProductsLoading(true);
       const response = await axios.get(`${backendUrl}/api/product/list`);
       if (response.data.success) {
         setProducts(response.data.products.reverse());
@@ -190,12 +192,15 @@ const ShopContextProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
       toast.error(error.message);
+    } finally {
+      setProductsLoading(false);
     }
   };
 
+  // fetch once on mount; storing `products` in the deps caused repeated requests
   useEffect(() => {
     getProductsData();
-  }, [products]);
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -227,6 +232,7 @@ const ShopContextProvider = ({ children }) => {
     userData,
     setUserData,
     loading,
+    productsLoading,
     addToCart,
     removeFromCart,
     updateCartItem,

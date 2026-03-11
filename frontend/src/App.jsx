@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Collection from "./pages/Collection";
 import About from "./pages/About";
@@ -19,7 +19,7 @@ import MyProfile from "./components/MyProfile";
 import TermsConditions from "./components/TermsConditions";
 import CompanyPolicy from "./components/companyPolicy";
 import Signup from "./pages/Signup";
-import ShopContextProvider, { ShopContext } from "./context/ShopContext";
+import { ShopContext } from "./context/ShopContext";
 import DeleteRequest from "./pages/DeleteRequest";
 import ReferredUsers from "./components/RefferedUsers";
 import LevelController from "./components/Levelcontroller";
@@ -33,7 +33,7 @@ const App = () => {
   const { token, userData } = useContext(ShopContext);
   
   return (
-    <ShopContextProvider>
+    <>
       <ToastContainer autoClose={1000} position="bottom-right" />
       <Navbar />
       <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
@@ -66,7 +66,7 @@ const App = () => {
         </Routes>
       </div>
       <Footer />
-    </ShopContextProvider>
+    </>
   );
 };
 

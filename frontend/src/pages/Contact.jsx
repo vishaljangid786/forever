@@ -54,7 +54,7 @@ const Contact = () => {
               jaipur rajasthan 302029
             </p>
             <p className="text-gray-500">
-              Tel: 9462365447 <br /> Email: vkallinmarketing@gmail.com
+              Tel: 9462365447 <br /> Email: vjallinmarketing@gmail.com
             </p>
           </div>
           {/* Newsletter Section */}

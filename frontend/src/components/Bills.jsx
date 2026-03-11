@@ -40,23 +40,23 @@ const Bills = ({ userData }) => {
   };
 
   return (
-    <div className="max-w-5xl p-6 mx-auto bg-white rounded shadow-lg">
-      <h2 className="mb-4 text-2xl font-semibold">Your Bills</h2>
+    <div className="max-w-5xl p-6 mx-auto bg-white dark:bg-gray-800 rounded shadow-lg">
+      <h2 className="mb-4 text-2xl font-semibold dark:text-gray-200">Your Bills</h2>
       {userBills.length === 0 ? (
-        <p>No bills found for your UID.</p>
+        <p className="text-gray-700 dark:text-gray-300">No bills found for your UID.</p>
       ) : (
-        <table className="min-w-full text-sm text-left table-auto">
-          <thead className="bg-gray-100">
+        <table className="min-w-full text-sm text-left table-auto dark:text-gray-300">
+          <thead className="bg-gray-100 dark:bg-gray-700">
             <tr>
-              <th className="p-2 font-semibold border">#</th>
-              <th className="p-2 font-semibold border">Title</th>
-              <th className="p-2 font-semibold border">Image</th>
-              <th className="p-2 font-semibold border">Download</th>
+              <th className="p-2 font-semibold border dark:border-gray-600 dark:text-gray-200">#</th>
+              <th className="p-2 font-semibold border dark:border-gray-600 dark:text-gray-200">Title</th>
+              <th className="p-2 font-semibold border dark:border-gray-600 dark:text-gray-200">Image</th>
+              <th className="p-2 font-semibold border dark:border-gray-600 dark:text-gray-200">Download</th>
             </tr>
           </thead>
           <tbody>
             {userBills.map((bill, index) => (
-              <tr key={bill._id} className="bg-white border-b">
+              <tr key={bill._id} className="bg-white dark:bg-gray-700 dark:border-gray-600 border-b">
                 <td className="p-2 border">{index + 1}</td>
                 <td className="p-2 border">{bill.title}</td>
                 <td className="p-2 border">

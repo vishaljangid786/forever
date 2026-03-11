@@ -62,9 +62,9 @@ const LevelController = ({ token, userData }) => {
   const userLevelIndex = levels.findIndex((lvl) => lvl.levelName === levelName);
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100 rounded">
-      <div className="max-w-5xl p-6 mx-auto bg-white rounded-lg shadow-lg">
-        <h2 className="mb-4 text-2xl font-bold text-gray-800">
+    <div className="min-h-screen p-6 bg-gray-100 dark:bg-gray-900 rounded">
+      <div className="max-w-5xl p-6 mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <h2 className="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">
           Level Controller
         </h2>
 
@@ -82,12 +82,12 @@ const LevelController = ({ token, userData }) => {
 
         {/* Loading State */}
         {loading ? (
-          <div className="text-gray-600"><Loading /></div>
+          <div className="text-gray-600 dark:text-gray-300"><Loading /></div>
         ) : levels.length > 0 ? (
           <>
             {/* ✅ Inactive user message */}
             {userData?.status === false && (
-              <div className="p-4 mb-4 text-yellow-800 bg-yellow-100 border border-yellow-300 rounded">
+              <div className="p-4 mb-4 text-yellow-800 dark:text-yellow-200 bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-600 rounded">
                 ⚠️ You are not an active member since you completed the minimum
                 amount to be active.
               </div>
@@ -107,12 +107,12 @@ const LevelController = ({ token, userData }) => {
                     key={level._id}
                     className={`p-4 border-l-4 rounded-lg shadow ${
                       isCurrentLevel
-                        ? "border-green-500 bg-green-50"
+                        ? "border-green-500 bg-green-50 dark:bg-green-900 dark:border-green-300"
                         : isCompleted
-                        ? "border-gray-400 bg-gray-100"
-                        : "border-red-400 bg-red-50"
+                        ? "border-gray-400 bg-gray-100 dark:bg-gray-700 dark:border-gray-600"
+                        : "border-red-400 bg-red-50 dark:bg-red-900 dark:border-red-600"
                     }`}>
-                    <h3 className="flex items-center justify-between text-lg font-bold text-gray-800">
+                    <h3 className="flex items-center justify-between text-lg font-bold text-gray-800 dark:text-gray-200">
                       {level.levelName}
                       {isCurrentLevel && (
                         <span className="text-xs font-semibold text-green-600">
@@ -129,7 +129,7 @@ const LevelController = ({ token, userData }) => {
                       )}
                     </h3>
 
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
                       Left:{" "}
                       <span className="font-bold">
                         {isCurrentLevel
@@ -138,7 +138,7 @@ const LevelController = ({ token, userData }) => {
                       </span>
                     </p>
 
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
                       Right:{" "}
                       <span className="font-bold">
                         {isCurrentLevel
@@ -179,7 +179,7 @@ const LevelController = ({ token, userData }) => {
                       </div>
                     )}
 
-                    <p className="mt-2 text-sm text-gray-700">
+                    <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
                       Reward: <span className="font-bold">₹{level.price}</span>
                     </p>
 

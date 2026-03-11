@@ -279,7 +279,7 @@ const userOrders = async (req, res) => {
     const userId = decoded.id || decoded.userId;
 
     // Find orders associated with the user
-    const orders = await orderModel.find({ userId }).sort({ date: -1 });
+    const orders = await orderModel.find({ userId });
 
     res.json({ success: true, orders });
   } catch (error) {
@@ -298,10 +298,7 @@ const getSingleOrder = async (req, res) => {
         .json({ success: false, message: "Order ID is required" });
     }
 
-    let order = await orderModel.findById(id).populate("userId").populate({
-      path: "items.productId",
-      model: "Product",
-    });
+    let order = await orderModel.findById(id);
 
     if (!order) {
       return res

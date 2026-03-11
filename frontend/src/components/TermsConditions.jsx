@@ -26,7 +26,7 @@ const TermsConditions = () => {
         <p className="text-lg text-gray-600 mb-6">We reserve the right to modify these terms at any time. Any changes will be posted on this page.</p>
         
         <div className="mt-10 text-center">
-          <p className="text-lg text-gray-600">If you have any questions about these Terms & Conditions, please contact us at <span className="text-blue-600 font-medium">vkallinmarketing@gmail.com</span>.</p>
+          <p className="text-lg text-gray-600">If you have any questions about these Terms & Conditions, please contact us at <span className="text-blue-600 font-medium">vjallinmarketing@gmail.com</span>.</p>
         </div>
       </div>
     </div>

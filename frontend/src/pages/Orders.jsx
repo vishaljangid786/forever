@@ -93,15 +93,15 @@ const Orders = () => {
 
   return (
     <div className="pt-16">
-      <div className="mb-8 text-3xl font-semibold text-center text-gray-800">
+      <div className="mb-8 text-3xl font-semibold text-center text-gray-800 dark:text-gray-200">
         <Title text1={"MY"} text2={"ORDERS"} />
       </div>
 
-      <div className="max-w-6xl p-6 mx-auto bg-white rounded-lg shadow-lg">
-        <hr className="border-gray-300" />
+      <div className="max-w-6xl p-6 mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <hr className="border-gray-300 dark:border-gray-600" />
 
         {orderData.length === 0 ? (
-          <p className="mt-6 text-lg text-center text-gray-500">
+          <p className="mt-6 text-lg text-center text-gray-500 dark:text-gray-400">
             No orders yet.
           </p>
         ) : (
@@ -109,7 +109,7 @@ const Orders = () => {
             {[...orderData].reverse().map((item, index) => (
               <div
                 key={index}
-                className="flex flex-col gap-6 p-5 transition-shadow duration-300 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg md:flex-row">
+                className="flex flex-col gap-6 p-5 transition-shadow duration-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg md:flex-row">
                 {/* Product Image */}
                 <div className="flex-shrink-0">
                   <img
@@ -123,7 +123,7 @@ const Orders = () => {
                 <div className="flex-1">
                   {/* Order Header */}
                   <div className="flex items-center justify-between mb-4">
-                    <p className="text-lg font-semibold text-gray-800">
+                    <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                       Order #{index + 1}
                     </p>
                     <div className="flex items-center gap-2">
@@ -142,13 +142,13 @@ const Orders = () => {
                     item.status !== "Out for delivery" && (
                       <button
                         onClick={() => handleDeleteOrder(item.orderId)}
-                        className="px-4 py-2 mt-2 text-sm text-white transition bg-red-500 rounded hover:bg-red-600 md:mt-0">
+                        className="px-4 py-2 mt-2 text-sm text-white transition bg-red-500 dark:bg-red-600 rounded hover:bg-red-600 md:mt-0">
                         Delete Order
                       </button>
                     )}
 
                   {/* Order Content */}
-                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-700 md:grid-cols-3">
+                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300 md:grid-cols-3">
                     <div>
                       <p className="font-semibold">Product Name:</p>
                       <p>{item.name}</p>

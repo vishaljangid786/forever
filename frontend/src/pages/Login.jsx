@@ -126,10 +126,10 @@ const Login = () => {
   return (
     <form
       onSubmit={onSubmitHandler}
-      className="flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800">
+      className="flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800 dark:text-gray-200">
       <div className="inline-flex items-center gap-2 mt-10 mb-2">
         <p className="text-3xl prata-regular">Login</p>
-        <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
+        <hr className="border-none h-[1.5px] w-8 bg-gray-800 dark:bg-gray-200" />
       </div>
 
       {/* Changed from email to UID for login */}
@@ -143,7 +143,7 @@ const Login = () => {
             }}
           value={uid}
             type="text"
-            className="w-full px-3 py-2 border border-gray-800"
+            className="w-full px-3 py-2 border border-gray-800 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
             placeholder="User ID"
             required
           />
@@ -154,7 +154,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
                 type={showpassword ? "text" : "password"}
-                className="w-full px-3 py-2 pr-10 border border-gray-800"
+                className="w-full px-3 py-2 pr-10 border border-gray-800 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Enter password"
                 required
               />
@@ -177,7 +177,7 @@ const Login = () => {
           onChange={(e) => setEmail(e.target.value)}
           value={email}
           type="text"
-          className="w-full px-3 py-2 border border-gray-800"
+          className="w-full px-3 py-2 border border-gray-800 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
           placeholder="Enter Email for OTP"
         />
       )}
@@ -188,7 +188,7 @@ const Login = () => {
             onChange={(e) => setOtp(e.target.value)}
             value={otp}
             type="text"
-            className="w-full px-3 py-2 border border-gray-800"
+            className="w-full px-3 py-2 border border-gray-800 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
             placeholder="Enter OTP"
             required
           />
@@ -197,7 +197,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               type={showpassword ? "text" : "password"}
-              className="w-full px-3 py-2 pr-10 border border-gray-800"
+              className="w-full px-3 py-2 pr-10 border border-gray-800 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
               placeholder="Enter password"
               required
             />
@@ -216,28 +216,28 @@ const Login = () => {
             type="button"
             onClick={verifyOtp}
             disabled={loading}
-            className="px-8 py-2 font-light text-white bg-black disabled:bg-gray-400">
+            className="px-8 py-2 font-light text-white bg-black dark:bg-primary-500 disabled:bg-gray-400 dark:disabled:bg-gray-600">
             {loading ? "Verifying..." : "Verify OTP & Set Password"}
           </button>
         </div>
       )}
 
       <div className="w-full flex justify-between text-sm mt-[-8px]">
-        <p className="cursor-pointer" onClick={forgotpass}>
+        <p className="cursor-pointer text-gray-700 dark:text-gray-300" onClick={forgotpass}>
           Forgot password
         </p>
         {show && (
-          <p className="text-gray-500 cursor-pointer">
+          <p className="text-gray-500 dark:text-gray-400 cursor-pointer">
             {timer > 0 ? (
               `Resend OTP in ${formatTime(timer)}s`
             ) : (
-              <span onClick={sendOtp} className="text-gray-600 cursor-pointer">
+              <span onClick={sendOtp} className="text-gray-600 dark:text-gray-300 cursor-pointer">
                 {loading ? "Sending..." : "Send OTP"}
               </span>
             )}
           </p>
         )}
-        <p onClick={() => navigate("/signup")} className="cursor-pointer">
+        <p onClick={() => navigate("/signup")} className="cursor-pointer text-gray-700 dark:text-gray-300">
           Create account
         </p>
       </div>
@@ -246,7 +246,7 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className="px-8 py-2 mt-4 font-light text-white bg-black disabled:bg-gray-400">
+          className="px-8 py-2 mt-4 font-light text-white bg-black dark:bg-primary-500 disabled:bg-gray-400 dark:disabled:bg-gray-600">
           {loading ? "Please wait..." : "Sign In"}
         </button>
       )}

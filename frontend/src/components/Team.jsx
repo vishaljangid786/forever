@@ -181,8 +181,8 @@ const Team = ({ userData, token }) => {
 
   return (
   <>
-      <div>
-        <p className="px-3 py-1 mt-2 text-red-500 bg-red-100 border border-red-500 rounded">
+      <div className="bg-white dark:bg-gray-900">
+        <p className="px-3 py-1 mt-2 text-red-500 bg-red-100 dark:bg-red-900 dark:text-red-200 border border-red-500 dark:border-red-700 rounded">
           Reload Page to get the Updated Data.
         </p>
         {/* {userData?.cc && ( */}
@@ -197,8 +197,8 @@ const Team = ({ userData, token }) => {
           </p>
         {/* )} */}
         <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2">
-          <div className="p-5 rounded-lg shadow-md bg-gradient-to-r from-green-200 to-emerald-100">
-            <h2 className="text-2xl font-bold text-emerald-700">Your Team</h2>
+          <div className="p-5 rounded-lg shadow-md bg-gradient-to-r from-green-200 to-emerald-100 dark:from-green-800 dark:to-emerald-900">
+            <h2 className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">Your Team</h2>
             <div className="mt-2 text-lg">
               Direct Team:{" "}
               <span className="font-semibold">{referredUsers.length}</span>
@@ -211,12 +211,12 @@ const Team = ({ userData, token }) => {
               <span className="font-semibold">{totalDirectDeactive}</span>
             </div>
             <div className="flex gap-4 mt-4">
-              <div className="p-4 bg-blue-100 rounded-lg shadow-md">
-                <p className="font-semibold text-blue-700">Total Left Users</p>
+              <div className="p-4 bg-blue-100 dark:bg-blue-900 rounded-lg shadow-md">
+                <p className="font-semibold text-blue-700 dark:text-blue-300">Total Left Users</p>
                 <p className="text-xl font-bold">{totalLeft}</p>
               </div>
-              <div className="p-4 bg-green-100 rounded-lg shadow-md">
-                <p className="font-semibold text-green-700">
+              <div className="p-4 bg-green-100 dark:bg-green-900 rounded-lg shadow-md">
+                <p className="font-semibold text-green-700 dark:text-green-300">
                   Total Right Users
                 </p>
                 <p className="text-xl font-bold">{totalRight}</p>
@@ -224,8 +224,8 @@ const Team = ({ userData, token }) => {
             </div>
           </div>
 
-          <div className="p-5 rounded-lg shadow-md bg-gradient-to-r from-purple-200 to-indigo-100">
-            <h2 className="text-2xl font-bold text-purple-700">
+          <div className="p-5 rounded-lg shadow-md bg-gradient-to-r from-purple-200 to-indigo-100 dark:from-purple-800 dark:to-indigo-900">
+            <h2 className="text-2xl font-bold text-purple-700 dark:text-purple-300">
               Indirect Team
             </h2>
             <div className="mt-2 text-lg">
@@ -241,14 +241,14 @@ const Team = ({ userData, token }) => {
               <span className="font-semibold">{totalIndirectDeactive}</span>
             </div>
             <div className="flex gap-4 mt-4">
-              <div className="p-4 bg-purple-100 rounded-lg shadow-md">
-                <p className="font-semibold text-purple-700">
+              <div className="p-4 bg-purple-100 dark:bg-purple-900 rounded-lg shadow-md">
+                <p className="font-semibold text-purple-700 dark:text-purple-300">
                   Total Indirect Left Users
                 </p>
                 <p className="text-xl font-bold">{totalIndirectLeft}</p>
               </div>
-              <div className="p-4 bg-orange-100 rounded-lg shadow-md">
-                <p className="font-semibold text-orange-700">
+              <div className="p-4 bg-orange-100 dark:bg-orange-900 rounded-lg shadow-md">
+                <p className="font-semibold text-orange-700 dark:text-orange-300">
                   Total Indirect Right Users
                 </p>
                 <p className="text-xl font-bold">{totalIndirectRight}</p>
@@ -261,7 +261,7 @@ const Team = ({ userData, token }) => {
         <div className="mt-6">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center justify-between w-full p-4 bg-gray-200 rounded-lg">
+            className="flex items-center justify-between w-full p-4 bg-gray-200 dark:bg-gray-700 rounded-lg">
             <span className="font-semibold">View Direct Team</span>
             <span>
               {isOpen ? (
@@ -278,12 +278,12 @@ const Team = ({ userData, token }) => {
                 referredUsers.map((user) => (
                   <div
                     key={user._id}
-                    className="p-4 bg-white rounded-lg shadow-md">
+                    className="p-4 bg-white dark:bg-gray-700 rounded-lg shadow-md">
                     <p className="text-lg font-semibold text-gray-800">
                       {user.name}
                     </p>
                     <p className="text-sm text-gray-600">{user.email}</p>
-                    <p className="text-sm text-gray-600">{user.phone}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{user.phone}</p>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-sm text-gray-700">
                         PP: <strong>{user.cc} 🪙</strong>
@@ -300,7 +300,7 @@ const Team = ({ userData, token }) => {
                         {user.status ? "Active" : "Deactive"}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-blue-600">
+                    <p className="mt-2 text-sm text-blue-600 dark:text-blue-400">
                       Option: {user.option || "N/A"}
                     </p>
                   </div>
@@ -319,7 +319,7 @@ const Team = ({ userData, token }) => {
       {/* <div className="mt-6">
         <button
           onClick={() => setIsOpen2(!isOpen2)}
-          className="flex items-center justify-between w-full p-4 mt-4 bg-gray-200 rounded-lg">
+          className="flex items-center justify-between w-full p-4 mt-4 bg-gray-200 dark:bg-gray-700 rounded-lg">
           <span className="font-semibold">View InDirect Team</span>
           <span>
             {isOpen2 ? (
@@ -331,12 +331,12 @@ const Team = ({ userData, token }) => {
         </button>
 
         {isOpen2 && (
-          <div className="p-4 mt-2 space-y-4 bg-gray-100 rounded-lg">
+          <div className="p-4 mt-2 space-y-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
             {inDirectUsers.length > 0 ? (
               inDirectUsers.map((user) => (
                 <div
                   key={user._id}
-                  className="p-4 bg-white rounded-lg shadow-md">
+                  className="p-4 bg-white dark:bg-gray-700 rounded-lg shadow-md">
                   <p className="text-lg font-semibold text-gray-800">
                     {user.name}
                   </p>

@@ -39,23 +39,23 @@ const ReferredUsers = () => {
 
 
   return (
-    <div className="max-w-lg p-6 mx-auto mt-10">
-      <h2 className="mb-6 text-2xl font-bold text-center text-gray-600">
+    <div className="max-w-lg p-6 mx-auto mt-10 bg-white dark:bg-gray-800">
+      <h2 className="mb-6 text-2xl font-bold text-center text-gray-600 dark:text-gray-200">
         Referred Users
       </h2>
 
-      <div className="mb-4 text-center text-gray-700">
+      <div className="mb-4 text-center text-gray-700 dark:text-gray-300">
         <strong>Total Referred PP:</strong> {totalCC} 🪙
       </div>
 
       {referredUsers.length > 0 ? (
         <div className="space-y-4">
           {referredUsers.map((user) => (
-            <div key={user._id} className="p-4 bg-white rounded-lg shadow-md">
-              <p className="text-lg font-semibold text-gray-800">{user.name}</p>
-              <p className="text-sm text-gray-600">{user.email}</p>
+            <div key={user._id} className="p-4 bg-white dark:bg-gray-700 rounded-lg shadow-md">
+              <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">{user.name}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
               <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-gray-700 dark:text-gray-300">
                   PP: <strong>{user.cc} 🪙</strong>
                 </span>
                 <span
@@ -74,7 +74,7 @@ const ReferredUsers = () => {
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500">No referred users found.</p>
+        <p className="text-center text-gray-500 dark:text-gray-400">No referred users found.</p>
       )}
     </div>
   );
