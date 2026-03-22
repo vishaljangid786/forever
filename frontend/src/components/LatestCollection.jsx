@@ -10,6 +10,8 @@ const LatestCollection = () => {
     useEffect(() => {
         setLatestProducts(products.slice(0, 10));
     }, [products])
+    console.log(latestProducts);
+    
 
     return (
         <section className='py-16 sm:py-20'>

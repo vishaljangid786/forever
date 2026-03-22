@@ -55,7 +55,7 @@ const Orders = () => {
       const response = await api.get('/api/order/userorders');
       if (response.data.success) {
         setOrders(response.data.orders.reverse());
-        console.log(response.data)
+        // console.log(response.data)
       }
     } catch (error) {
       console.error('Error fetching orders:', error);

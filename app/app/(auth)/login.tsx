@@ -1,27 +1,20 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  Alert,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-  ScrollView,
-  ImageBackground,
-  TouchableOpacity,
-} from "react-native";
-import { useRouter } from "expo-router";
-import axios from "axios";
 import { assets } from "@/assets/images/assets";
+import AppInput from "@/components/AppInput";
+import { backendUrl } from "@/constants/constants";
 import { useAuth } from "@/context/AuthContext";
 import { useAppTheme } from "@/context/ThemeContext";
-import { backendUrl } from "@/constants/constants";
-import { BlurView } from "expo-blur";
-import { StatusBar } from "expo-status-bar";
-import AppInput from "@/components/AppInput";
+import axios from "axios";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
 
 export default function Login() {
   const router = useRouter();
@@ -78,6 +71,7 @@ export default function Login() {
       const response = await axios.post(`${backendUrl}/api/user/sendOtp`, {
         email,
       });
+      // console.log(response)
 
       if (response.data.success) {
         setOtpSent(true);
@@ -158,7 +152,7 @@ export default function Login() {
         <View className="w-32 h-32 rounded-full mb-16 p-[10px] items-center justify-center">
           <Image
             source={isDark ? assets.logo : assets.logodark}
-            className="w-full h-full"
+            className="w-full h-full w-32 h-32"
             resizeMode="contain"
           />
         </View>

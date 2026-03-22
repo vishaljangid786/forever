@@ -73,6 +73,7 @@ export default function SignupScreen() {
       const response = await axios.post(`${backendUrl}/api/user/sendOtp`, {
         email,
       });
+      // console.log(response)
 
       if (response.data.success) {
         setOtpSent(true);
@@ -149,7 +150,7 @@ export default function SignupScreen() {
         `${backendUrl}/api/user/check-referral`,
         { referralCode },
       );
-      console.log(response);
+      // console.log(response);
 
       if (referralCode === "SELLER@SELLER") {
         setRefferalapply(true);
@@ -235,10 +236,15 @@ export default function SignupScreen() {
       return;
     }
 
-    if (!acceptedTerms) {
-      Alert.alert("Error", "You must accept terms & conditions");
-      return;
-    }
+  if (!option) {
+  Alert.alert("Error", "Please select left or right option");
+  return;
+}
+
+if (!acceptedTerms) {
+  Alert.alert("Error", "You must accept Terms & Conditions");
+  return;
+}
 
     try {
       setSubmitting(true);
@@ -476,6 +482,43 @@ export default function SignupScreen() {
             {/* ---------------- STEP 3 ---------------- */}
             {step === 3 && (
               <>
+                {/* Option Selection */}
+<Text className={`mb-2 font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
+  Select Option
+</Text>
+
+<View className="flex-row gap-4 mb-4">
+  <Pressable
+    onPress={() => setOption("left")}
+    className={`flex-1 py-3 rounded-xl items-center ${
+      option === "left"
+        ? "bg-blue-600"
+        : isDark
+        ? "bg-slate-700"
+        : "bg-slate-200"
+    }`}
+  >
+    <Text className={option === "left" ? "text-white font-semibold" : textClassBase}>
+      Left
+    </Text>
+  </Pressable>
+
+  <Pressable
+    onPress={() => setOption("right")}
+    className={`flex-1 py-3 rounded-xl items-center ${
+      option === "right"
+        ? "bg-blue-600"
+        : isDark
+        ? "bg-slate-700"
+        : "bg-slate-200"
+    }`}
+  >
+    <Text className={option === "right" ? "text-white font-semibold" : textClassBase}>
+      Right
+    </Text>
+  </Pressable>
+</View>
+
                 <AppInput
                   value={addressStreet}
                   onChangeText={setAddressStreet}
@@ -514,6 +557,19 @@ export default function SignupScreen() {
                   placeholder="Zipcode"
                   isDark={isDark}
                 />
+                {/* Terms and Conditions */}
+<View className="flex-row items-center mt-4">
+  <Pressable
+    onPress={() => setAcceptedTerms(!acceptedTerms)}
+    className={`w-5 h-5 mr-3 rounded border ${
+      acceptedTerms ? "bg-blue-600 border-blue-600" : "border-gray-400"
+    }`}
+  />
+
+  <Text className={isDark ? "text-gray-300" : "text-slate-700"}>
+    I agree to the Terms & Conditions
+  </Text>
+</View>
               </>
             )}
 

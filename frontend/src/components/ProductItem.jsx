@@ -29,7 +29,7 @@ const ProductItem = ({ id, image = [], name, price = [], size = [] }) => {
       <div className="relative h-full flex flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-md hover:shadow-2xl border border-slate-200 dark:border-slate-700 transition-all duration-500">
 
         {/* IMAGE SECTION */}
-        <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-100 dark:bg-slate-700">
+        <div className="relative w-full h-96  overflow-hidden bg-slate-100 dark:bg-slate-700">
 
           {/* Product Image */}
           <img
