@@ -1,5 +1,6 @@
 import { assets } from "@/assets/images/assets";
 import AppInput from "@/components/AppInput";
+import LoadingScreen from "@/components/LoadingScreen";
 import { backendUrl } from "@/constants/constants";
 import { useAuth } from "@/context/AuthContext";
 import { useAppTheme } from "@/context/ThemeContext";
@@ -7,7 +8,6 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   Image,
   Pressable,
@@ -152,7 +152,7 @@ export default function Login() {
         <View className="w-32 h-32 rounded-full mb-16 p-[10px] items-center justify-center">
           <Image
             source={isDark ? assets.logo : assets.logodark}
-            className="w-full h-full w-32 h-32"
+            className="w-full h-full "
             resizeMode="contain"
           />
         </View>
@@ -216,7 +216,7 @@ export default function Login() {
             }`}
           >
             {loading ? (
-              <ActivityIndicator color={isDark ? "black" : "white"} />
+              <LoadingScreen />
             ) : (
               <Text
                 className={`text-center font-semibold text-lg ${

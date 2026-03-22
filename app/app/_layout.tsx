@@ -20,6 +20,8 @@ function RootNavigation() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal', headerShown: false }} />
+        <Stack.Screen name="checkout" options={{ presentation: 'modal', title: 'checout', headerShown: false }} />
+
       </Stack>
       <StatusBar backgroundColor='transparent' style={theme === 'dark' ? 'light':'dark'} />
     </ThemeProvider>

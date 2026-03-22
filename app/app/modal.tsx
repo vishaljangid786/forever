@@ -6,7 +6,6 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  ActivityIndicator,
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -14,6 +13,8 @@ import { useApi } from "@/hooks/useApi";
 import { useAppTheme } from "@/context/ThemeContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import LoadingScreen from "@/components/LoadingScreen";
+import Header from "@/components/Header";
 
 interface CartItem {
   _id: string;
@@ -79,63 +80,37 @@ export default function CartModal() {
     return sum + finalPrice * item.quantity;
   }, 0);
 
-  const placeOrder = async () => {
-    if (cartItems.length === 0) return;
-    try {
-      const response = await api.post("/api/order/place", {
-        items: cartItems.map((item) => ({
-          productId: item.productId._id,
-          quantity: item.quantity,
-          size: item.size,
-          color: item.color,
-        })),
-        amount: totalAmount,
-        address: { city: "Demo", street: "Demo Street" }, // Simplified for now
-      });
-      if (response.data.success) {
-        Alert.alert("Success", "Order placed successfully!");
-        router.replace("/(tabs)/orders");
-      }
-    } catch (error) {
-      Alert.alert("Error", "Failed to place order");
-    }
-  };
+  // const placeOrder = async () => {
+  //   if (cartItems.length === 0) return;
+  //   try {
+  //     const response = await api.post("/api/order/place", {
+  //       items: cartItems.map((item) => ({
+  //         productId: item.productId._id,
+  //         quantity: item.quantity,
+  //         size: item.size,
+  //         color: item.color,
+  //       })),
+  //       amount: totalAmount,
+  //       address: { city: "Demo", street: "Demo Street" }, // Simplified for now
+  //     });
+  //     if (response.data.success) {
+  //       Alert.alert("Success", "Order placed successfully!");
+  //       router.replace("/(tabs)/orders");
+  //     }
+  //   } catch (error) {
+  //     Alert.alert("Error", "Failed to place order");
+  //   }
+  // };
 
   if (loading) {
-    return (
-      <View
-        className={`flex-1 justify-center items-center ${isDark ? "bg-[#121212]" : "bg-white"}`}
-      >
-        <ActivityIndicator size="large" color={isDark ? "#fff" : "#000"} />
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   return (
     <SafeAreaView
       className={`flex-1 ${isDark ? "bg-[#121212]" : "bg-[#fafafa]"}`}
     >
-      <View className="px-6 py-6 flex-row justify-between items-center">
-        <Text
-          className={`text-3xl font-black tracking-tighter ${isDark ? "text-white" : "text-[#1a1a1a]"}`}
-        >
-          My Cart<Text className="text-red-500">.</Text>
-        </Text>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className={`w-10 h-10 rounded-full items-center justify-center ${isDark ? "bg-[#1e1e1e]" : "bg-white"}`}
-        >
-          <Text
-            className={`text-xl font-bold ${isDark ? "text-white" : "text-black"}`}
-          >
-            <Ionicons
-              name="close-outline"
-              color={isDark ? "#fff" : "#000"}
-              size={24}
-            />
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <Header Heading="My Cart" showClose />
 
       <FlatList
         data={cartItems}
@@ -230,7 +205,7 @@ export default function CartModal() {
 
       {cartItems.length > 0 && (
         <View
-          className={`absolute bottom-0 left-0 right-0 p-6 border-t ${isDark ? "bg-[#1e1e1e] border-gray-800" : "bg-white border-gray-100"}`}
+          className={` p-6 border-t ${isDark ? "bg-[#1e1e1e] border-gray-800" : "bg-white border-gray-100"}`}
         >
           <View className="flex-row justify-between items-center">
             <View>
@@ -247,7 +222,15 @@ export default function CartModal() {
             </View>
             <TouchableOpacity
               className="bg-red-500 px-10 py-4 rounded-2xl shadow-lg shadow-red-500/30"
-              onPress={placeOrder}
+              onPress={() =>
+                router.push({
+                  pathname: "/checkout",
+                  params: {
+                    cart: JSON.stringify(cartItems),
+                    total: totalAmount,
+                  },
+                })
+              }
             >
               <Text className="text-white text-base font-black uppercase tracking-widest">
                 Checkout

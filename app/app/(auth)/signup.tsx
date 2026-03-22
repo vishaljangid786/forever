@@ -5,7 +5,6 @@ import {
   TextInput,
   Pressable,
   Alert,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Image,
@@ -22,6 +21,7 @@ import { backendUrl } from "@/constants/constants";
 import { BlurView } from "expo-blur";
 import AppInput from "@/components/AppInput";
 import { StatusBar } from "expo-status-bar";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -372,7 +372,7 @@ if (!acceptedTerms) {
                       className="px-3 py-1 rounded-lg bg-slate-700"
                     >
                       {checkingReferral ? (
-                        <ActivityIndicator color="#fff" size="small" />
+                        <LoadingScreen />
                       ) : (
                         <Text className="text-white text-xs font-semibold">
                           Apply
@@ -408,7 +408,7 @@ if (!acceptedTerms) {
                       className="px-3 py-1 rounded-lg bg-slate-700"
                     >
                       {sendingOtp ? (
-                        <ActivityIndicator color="#fff" size="small" />
+                        <LoadingScreen />
                       ) : (
                         <Text className="text-white text-xs font-semibold">
                           {timer > 0 ? `${timer}s` : "Send"}
@@ -433,7 +433,7 @@ if (!acceptedTerms) {
                           className="px-3 py-1 rounded-lg bg-slate-700"
                         >
                           {verifyingOtp ? (
-                            <ActivityIndicator color="#fff" size="small" />
+                            <LoadingScreen />
                           ) : (
                             <Text className="text-white text-xs font-semibold">
                               Verify

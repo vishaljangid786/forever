@@ -5,7 +5,6 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  ActivityIndicator,
   RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,6 +15,8 @@ import { assets } from "@/assets/images/assets";
 import { TextInput } from "react-native";
 import { useRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import Header from "@/components/Header";
+import LoadingScreen from "@/components/LoadingScreen";
 
 interface Product {
   _id: string;
@@ -95,7 +96,7 @@ const Index = () => {
             resizeMode="cover"
           />
           {item.bestseller && (
-            <View className="absolute top-2 left-2 bg-black/70 px-2 py-1 rounded-md">
+            <View className="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded-lg">
               <Text className="text-[10px] text-white font-bold uppercase tracking-wider">
                 Bestseller
               </Text>
@@ -104,14 +105,14 @@ const Index = () => {
         </View>
         <View className="p-4">
           <Text
-            className={`text-sm font-medium mb-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}
+            className={`text-xs font-medium mb-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}
             numberOfLines={1}
           >
             {item.category}
           </Text>
           <Text
-            className={`text-base font-bold mb-2 h-10 ${isDark ? "text-white" : "text-[#1a1a1a]"}`}
-            numberOfLines={2}
+            className={`text-xs font-bold ${isDark ? "text-white" : "text-[#1a1a1a]"}`}
+            numberOfLines={1}
           >
             {item.name}
           </Text>
@@ -141,14 +142,7 @@ const Index = () => {
 
   if (loading && !refreshing) {
     return (
-      <View
-        className={`flex-1 justify-center items-center ${isDark ? "bg-[#121212]" : "bg-white"}`}
-      >
-        <ActivityIndicator
-          size="large"
-          color={isDark ? "#ffffff" : "#000000"}
-        />
-      </View>
+      <LoadingScreen />
     );
   }
 
@@ -156,94 +150,19 @@ const Index = () => {
     <SafeAreaView
       className={`flex-1 ${isDark ? "bg-[#121212]" : "bg-[#fafafa]"}`}
     >
-      {/* Header */}
-      <View
-        className={`flex-row justify-between items-center px-6 py-4 ${
-          isDark ? "bg-[#121212]" : "bg-[#fafafa]"
-        }`}
-      >
-        {/* Header left */}
-        <View className={"flex-row items-center justify-center"}>
-          <Text
-            className={`text-xs font-bold uppercase tracking-widest ${isDark ? "text-gray-500" : "text-gray-400"}`}
-          >
-            Welcome to
-          </Text>
-          <Image
-            source={isDark ? assets.logo : assets.logodark}
-            resizeMode={"cover"}
-            className={"size-10"}
-          />
-        </View>
-
-        {/* Search & cart */}
-        <View className="flex-row items-center space-x-3">
-          <TouchableOpacity
-            onPress={() => {
-              setShowSearch(true);
-              setTimeout(() => searchRef.current?.focus(), 100);
-            }}
-            className={`w-12 h-12 rounded-full items-center justify-center ${
-              isDark ? "bg-[#1e1e1e]" : "bg-white"
-            }`}
-          >
-            <Ionicons
-              name="search-outline"
-              size={22}
-              color={isDark ? "#fff" : "#000"}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => router.push("/modal")}
-            className={`w-12 h-12 rounded-full items-center justify-center ${
-              isDark ? "bg-[#1e1e1e]" : "bg-white"
-            }`}
-          >
-            <Ionicons
-              name="cart-outline"
-              size={22}
-              color={isDark ? "#fff" : "#000"}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* show Search input */}
-      {showSearch && (
-        <View className="px-6 mb-4">
-          <View
-            className={`flex-row items-center px-4 py-3 rounded-2xl ${
-              isDark ? "bg-[#1e1e1e]" : "bg-white"
-            }`}
-          >
-            <TextInput
-              ref={searchRef}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="Search products..."
-              placeholderTextColor={isDark ? "#888" : "#999"}
-              className={`flex-1 text-base ${
-                isDark ? "text-white" : "text-black"
-              }`}
-            />
-
-            {/* Close Button */}
-            <TouchableOpacity
-              onPress={() => {
-                setShowSearch(false);
-                setSearchQuery("");
-              }}
-            >
-              <Ionicons
-                name="close-outline"
-                size={22}
-                color={isDark ? "#fff" : "#000"}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
+      <Header
+        showSearch
+        showLogo
+        showCart
+        isSearchVisible={showSearch}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onSearchOpen={() => setShowSearch(true)}
+        onSearchClose={() => {
+          setShowSearch(false);
+          setSearchQuery(""); // optional reset
+        }}
+      />
 
       {/* Product List */}
       <FlatList
@@ -295,6 +214,7 @@ const Index = () => {
           </View>
         }
       />
+      <View className="my-10" />
     </SafeAreaView>
   );
 };

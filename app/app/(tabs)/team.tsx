@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { useApi } from '@/hooks/useApi';
 import { useAppTheme } from '@/context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '@/components/Header';
+import LoadingScreen from '@/components/LoadingScreen';
 
 interface TeamMember {
   _id: string;
@@ -63,23 +65,13 @@ export default function TeamScreen() {
   );
 
   if (loading && !refreshing) {
-    return (
-      <View className={`flex-1 justify-center items-center ${isDark ? 'bg-[#121212]' : 'bg-white'}`}>
-        <ActivityIndicator size="large" color={isDark ? "#fff" : "#000"} />
-      </View>
+    return (<LoadingScreen />
     );
   }
 
   return (
     <SafeAreaView className={`flex-1 ${isDark ? 'bg-[#121212]' : 'bg-[#fafafa]'}`}>
-      <View className="px-6 py-6 flex-row justify-between items-center">
-        <Text className={`text-3xl font-black tracking-tighter ${isDark ? 'text-white' : 'text-[#1a1a1a]'}`}>
-          Our Team<Text className="text-red-500">.</Text>
-        </Text>
-        <View className={`w-10 h-10 rounded-full items-center justify-center ${isDark ? 'bg-[#1e1e1e]' : 'bg-white'}`}>
-          <Text className="text-lg">👥</Text>
-        </View>
-      </View>
+      <Header Heading='Our Team' HeadingIcon='people-outline' />
       
       <FlatList
         data={team}

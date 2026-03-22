@@ -5,7 +5,6 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   Dimensions,
 } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
@@ -13,6 +12,8 @@ import { useApi } from "@/hooks/useApi";
 import { useAppTheme } from "@/context/ThemeContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import LoadingScreen from "@/components/LoadingScreen";
+import Header from "@/components/Header";
 
 const { width } = Dimensions.get("window");
 
@@ -115,13 +116,7 @@ const ProductDetails = () => {
   };
 
   if (loading) {
-    return (
-      <View
-        className={`flex-1 justify-center items-center ${isDark ? "bg-[#121212]" : "bg-white"}`}
-      >
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   const priceArray = product?.price ? String(product.price).split(",") : [];
@@ -147,20 +142,7 @@ const ProductDetails = () => {
   return (
     <SafeAreaView className={`flex-1 ${isDark ? "bg-[#121212]" : "bg-white"}`}>
       <Stack.Screen options={{ headerShown: false }} />
-   <View className="absolute top-12 left-4 z-10">
-  <TouchableOpacity
-    onPress={() => router.back()}
-    className={`w-10 h-10 rounded-full items-center justify-center ${
-      isDark ? "bg-[#1e1e1e]" : "bg-white"
-    }`}
-  >
-    <Ionicons
-      name="arrow-back"
-      size={22}
-      color={isDark ? "white" : "black"}
-    />
-  </TouchableOpacity>
-</View>
+      <Header showBack title={product.name} />
       <ScrollView>
         <Image
           source={{ uri: mainImage }}
@@ -317,7 +299,11 @@ const ProductDetails = () => {
               Category: {product.category}
             </Text>
 
-            <Text className={` mx-1 ${isDark ? "text-gray-400" : "text-gray-600"}`}>•</Text>
+            <Text
+              className={` mx-1 ${isDark ? "text-gray-400" : "text-gray-600"}`}
+            >
+              •
+            </Text>
 
             <Text className={`${isDark ? "text-gray-400" : "text-gray-600"}`}>
               SubCategory: {product.subCategory}
