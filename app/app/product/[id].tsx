@@ -8,12 +8,12 @@ import {
   Dimensions,
 } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useApi } from "@/hooks/useApi";
 import { useAppTheme } from "@/context/ThemeContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingScreen from "@/components/LoadingScreen";
 import Header from "@/components/Header";
+import { useAuth } from "@/context/AuthContext";
 
 const { width } = Dimensions.get("window");
 
@@ -21,33 +21,33 @@ interface Product {
   _id: string;
   name: string;
   description: string;
-  price: string;
-  oldPrice: string;
+  price: string | number;
+  oldPrice: string | number;
   image: string[];
   category: string;
   subCategory: string;
-  sizes: string[];
-  color: string[];
-  cc: string;
-  bestseller: boolean;
-  createdBy: {
+  sizes?: string[];
+  color?: string[];
+  cc?: string;
+  bestseller?: boolean;
+  createdBy?: {
     _id: string;
     name: string;
     email: string;
     location: string;
   };
-  averageRating: number;
+  averageRating?: number;
 }
 
 const ProductDetails = () => {
   const params = useLocalSearchParams();
-  const id = params.id;
+  const id = String(params.id || "");
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
-  const api = useApi();
+  const { productsMap, getProductById, addToCart: addCartItem } = useAuth();
   const { theme } = useAppTheme();
   const isDark = theme === "dark";
   const router = useRouter();
@@ -55,34 +55,25 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        console.log("Fetching product with id:", id);
         if (!id) {
-          console.error("No product ID found in params");
           setLoading(false);
           return;
         }
-        const response = await api.get(`/api/product/single/${id}`);
-        console.log("Product fetch response:", response.data);
-        if (response.data.success) {
-          const fetchedProduct = response.data.product;
+        const cachedProduct = productsMap[id];
+        const fetchedProduct = cachedProduct || (await getProductById(id));
+        if (fetchedProduct) {
           setProduct(fetchedProduct);
 
           if (fetchedProduct.image?.length > 0) {
             setMainImage(fetchedProduct.image[0]);
           }
 
-          if (fetchedProduct.sizes?.length > 0) {
+          if (fetchedProduct.sizes?.length) {
             setSelectedSize(fetchedProduct.sizes[0]); // 🔥 default select
           }
-        } else {
-          console.error("Failed to fetch product:", response.data.message);
         }
       } catch (error: any) {
         console.error("Error fetching product:", error);
-        if (error.response) {
-          console.error("Error response data:", error.response.data);
-          console.error("Error response status:", error.response.status);
-        }
       } finally {
         setLoading(false);
       }
@@ -91,7 +82,7 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
-  const addToCart = async () => {
+  const handleAddToCart = async () => {
     if (!selectedSize || !selectedColor) {
       alert("Please select size and color");
       return;
@@ -99,14 +90,14 @@ const ProductDetails = () => {
     if (!product) return;
 
     try {
-      const response = await api.post("/api/cart/add", {
+      const success = await addCartItem({
         productId: id,
         quantity: 1,
         size: selectedSize,
         color: selectedColor,
         price: priceArray[selectedIndex] || priceArray[0],
       });
-      if (response.data.success || response.status === 201) {
+      if (success) {
         alert("Added to cart!");
       }
     } catch (error) {
@@ -328,7 +319,7 @@ const ProductDetails = () => {
       >
         <TouchableOpacity
           className="bg-black py-[15px] rounded-xl items-center"
-          onPress={addToCart}
+          onPress={handleAddToCart}
         >
           <Text className="text-white text-[18px] font-bold">Add to Cart</Text>
         </TouchableOpacity>

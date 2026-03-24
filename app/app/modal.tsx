@@ -9,12 +9,12 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useApi } from "@/hooks/useApi";
 import { useAppTheme } from "@/context/ThemeContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingScreen from "@/components/LoadingScreen";
 import Header from "@/components/Header";
+import { useAuth } from "@/context/AuthContext";
 
 interface CartItem {
   _id: string;
@@ -31,19 +31,18 @@ interface CartItem {
 }
 
 export default function CartModal() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const api = useApi();
+  const { cartItems, fetchCartItems, removeCartItem } = useAuth();
+  const [loading, setLoading] = useState(cartItems.length === 0);
   const { theme } = useAppTheme();
   const isDark = theme === "dark";
   const router = useRouter();
 
-  const fetchCart = async () => {
+  const loadCart = async (force = false) => {
+    if (cartItems.length > 0 && !force) {
+      setLoading(false);
+    }
     try {
-      const response = await api.get("/api/cart/get");
-      if (response.data.success) {
-        setCartItems(response.data.cart.items);
-      }
+      await fetchCartItems(force);
     } catch (error) {
       console.error("Error fetching cart:", error);
     } finally {
@@ -52,14 +51,14 @@ export default function CartModal() {
   };
 
   useEffect(() => {
-    fetchCart();
+    loadCart();
   }, []);
 
-  const removeItem = async (productId: string) => {
+  const removeItem = async (itemId: string) => {
     try {
-      const response = await api.post("/api/cart/remove", { productId });
-      if (response.data.success) {
-        setCartItems(response.data.cart.items);
+      const success = await removeCartItem(itemId);
+      if (!success) {
+        Alert.alert("Error", "Failed to remove item");
       }
     } catch (error) {
       Alert.alert("Error", "Failed to remove item");

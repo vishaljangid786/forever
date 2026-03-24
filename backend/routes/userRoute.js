@@ -42,6 +42,7 @@ userRouter.get("/admin/dashboard", authRole("admin"), (req, res) => {
 userRouter.get("/seller/dashboard", authRole("seller"), (req, res) => {
   res.json({ success: true, message: "Welcome to the seller dashboard!" });
 });
+
 // userRouter.get("/fetchallusers", authRole("admin"), fetchAllUsers);
 userRouter.get("/fetchallusers", fetchAllUsers);
 userRouter.put("/updateRole", authRole("admin"), updateRole);

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, RefreshControl } from 'react-native';
-import { useApi } from '@/hooks/useApi';
 import { useAppTheme } from '@/context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/Header';
 import LoadingScreen from '@/components/LoadingScreen';
+import { useAuth } from '@/context/AuthContext';
 
 interface TeamMember {
   _id: string;
@@ -14,19 +14,15 @@ interface TeamMember {
 }
 
 export default function TeamScreen() {
-  const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const api = useApi();
+  const { teamMembers, fetchTeamMembers } = useAuth();
   const { theme } = useAppTheme();
   const isDark = theme === 'dark';
 
-  const fetchTeam = async () => {
+  const loadTeam = async (force = false) => {
     try {
-      const response = await api.get('/api/user/getTeamMember');
-      if (response.data.success) {
-        setTeam(response.data.teamMembers || []);
-      }
+      await fetchTeamMembers(force);
     } catch (error) {
       console.error('Error fetching team members:', error);
     } finally {
@@ -36,12 +32,12 @@ export default function TeamScreen() {
   };
 
   useEffect(() => {
-    fetchTeam();
+    loadTeam();
   }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchTeam();
+    loadTeam(true);
   };
 
   const renderMember = ({ item }: { item: TeamMember }) => (
@@ -74,7 +70,7 @@ export default function TeamScreen() {
       <Header Heading='Our Team' HeadingIcon='people-outline' />
       
       <FlatList
-        data={team}
+        data={teamMembers}
         renderItem={renderMember}
         keyExtractor={(item) => item._id}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}

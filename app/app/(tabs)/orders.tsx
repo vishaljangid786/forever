@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useApi } from "@/hooks/useApi";
 import { useAppTheme } from "@/context/ThemeContext";
 import Header from "@/components/Header";
 import LoadingScreen from "@/components/LoadingScreen";
 import { Image } from "react-native";
-import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
 
 interface OrderItem {
   productId?: string;
@@ -34,46 +34,15 @@ interface Order {
 }
 
 const Orders = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [productsMap, setProductsMap] = useState<any>({});
-  const [usersMap, setUsersMap] = useState<any>({});
-  const api = useApi();
   const { theme } = useAppTheme();
   const isDark = theme === "dark";
-  const { token } = useAuth();
+  const { orders, productsMap, fetchOrders, userData } = useAuth();
 
-  const fetchOrders = async () => {
+  const loadOrders = async (force = false) => {
     try {
-      const response = await api.get("/api/order/userorders");
-
-      if (response.data.success) {
-        const ordersData = response.data.orders.reverse();
-        setOrders(ordersData);
-
-        // ✅ STEP 2: IDs extract yahi hoga
-        const allProductIds: string[] = [];
-        const allUserIds: string[] = [];
-
-        ordersData.forEach((order: any) => {
-          if (order.userId) allUserIds.push(order.userId);
-
-          order.items.forEach((item: any) => {
-            if (item.productId) {
-              allProductIds.push(item.productId);
-            }
-          });
-        });
-
-        // duplicates remove
-        const uniqueProductIds = [...new Set(allProductIds)];
-        const uniqueUserIds = [...new Set(allUserIds)];
-
-        // ✅ STEP 5: fetch call
-        await fetchProducts(uniqueProductIds);
-        await fetchUsers(uniqueUserIds);
-      }
+      await fetchOrders(force);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
@@ -82,49 +51,13 @@ const Orders = () => {
     }
   };
 
-  const fetchProducts = async (ids: string[]) => {
-    try {
-      const res = await api.post("/api/product/fetchMultipleProducts", {
-        productIds: ids,
-      },{
-        headers:{Authorization:`Bearer ${token}`},
-      });
-
-      const map: any = {};
-      res.data.products.forEach((p: any) => {
-        map[p._id] = p;
-      });
-
-      setProductsMap(map);
-    } catch (err) {
-      console.log("Product fetch error", err);
-    }
-  };
-
-  const fetchUsers = async (ids: string[]) => {
-    try {
-      const res = await api.post("/api/user/fetchMultipleUsers", {
-        userIds: ids,
-      });
-
-      const map: any = {};
-      res.data.users.forEach((u: any) => {
-        map[u._id] = u;
-      });
-
-      setUsersMap(map);
-    } catch (err) {
-      console.log("User fetch error", err);
-    }
-  };
-
   useEffect(() => {
-    fetchOrders();
+    loadOrders();
   }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchOrders();
+    loadOrders(true);
   };
 
   const getStatusStyle = (status: string) => {
@@ -272,37 +205,77 @@ const Orders = () => {
     <SafeAreaView
       className={`flex-1 ${isDark ? "bg-[#121212]" : "bg-[#fafafa]"}`}
     >
-      <Header Heading="My Orders" HeadingIcon="cart-outline" />
+      {userData.role === "admin" && (
+        <View>
+          <Header Heading="All Orders" HeadingIcon="cart-outline" />
 
-      <FlatList
-        data={orders}
-        renderItem={renderOrder}
-        keyExtractor={(item) => item._id}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: 40,
-        }}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={isDark ? "#fff" : "#000"}
+          <FlatList
+            data={orders}
+            renderItem={renderOrder}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={{
+              paddingHorizontal: 16,
+              paddingBottom: 40,
+            }}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={isDark ? "#fff" : "#000"}
+              />
+            }
+            ListEmptyComponent={
+              <View className="flex-1 justify-center items-center py-20">
+                <Ionicons name="cube-outline"  size={40} className="mb-3" color={isDark ? "#fafafa" : "#1212"}/>
+                <Text
+                  className={`text-lg ${
+                    isDark ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  No orders yet.
+                </Text>
+              </View>
+            }
           />
-        }
-        ListEmptyComponent={
-          <View className="flex-1 justify-center items-center py-20">
-            <Text className="text-4xl mb-4">📦</Text>
-            <Text
-              className={`text-lg ${
-                isDark ? "text-gray-400" : "text-gray-500"
-              }`}
-            >
-              No orders yet
-            </Text>
-          </View>
-        }
-      />
+        </View>
+      )}
+
+       {userData.role === "user" && (
+        <View>
+          <Header Heading="My Orders" HeadingIcon="cart-outline" />
+
+          <FlatList
+            data={orders}
+            renderItem={renderOrder}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={{
+              paddingHorizontal: 16,
+              paddingBottom: 40,
+            }}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={isDark ? "#fff" : "#000"}
+              />
+            }
+            ListEmptyComponent={
+              <View className="flex-1 justify-center items-center py-20">
+                <Ionicons name="cube-outline"  size={40} className="mb-3" color={isDark ? "#fafafa" : "#1212"}/>
+                <Text
+                  className={`text-lg ${
+                    isDark ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  No orders yet.
+                </Text>
+              </View>
+            }
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

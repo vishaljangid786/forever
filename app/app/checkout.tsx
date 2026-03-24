@@ -13,17 +13,18 @@ import { useAppTheme } from "@/context/ThemeContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import LoadingScreen from "@/components/LoadingScreen";
+import { useAuth } from "@/context/AuthContext";
 
 export default function CheckoutScreen() {
   const { cart, total } = useLocalSearchParams();
   const cartItems = JSON.parse(cart as string);
   const router = useRouter();
   const api = useApi();
+  const { userData, fetchUserData } = useAuth();
   const { theme } = useAppTheme();
   const isDark = theme === "dark";
 
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState<any>(null); // ✅ NEW
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -37,15 +38,11 @@ export default function CheckoutScreen() {
     phone: "",
   });
 
-  // ✅ FETCH USER DATA
   useEffect(() => {
-    const fetchUser = async () => {
+    const loadUser = async () => {
       try {
-        const res = await api.get("/api/user/fetchuserdata");
-        if (res.data.success) {
-          const user = res.data.user || res.data.userData;
-
-          setUserData(user); // ✅ IMPORTANT
+        const user = await fetchUserData();
+        if (user) {
 
           const [firstName, ...lastName] = (user.name || "").split(" ");
 
@@ -68,7 +65,7 @@ export default function CheckoutScreen() {
       }
     };
 
-    fetchUser();
+    loadUser();
   }, []);
 
   const handleChange = (name: string, value: string) => {
@@ -140,8 +137,7 @@ export default function CheckoutScreen() {
         Alert.alert("Success", "Order placed successfully");
         router.replace("/(tabs)/orders");
       } else {
-        Alert.alert("Error", res.data.message);
-        console.log(res.data);
+        Alert.alert("Error", res.data.message || "Order failed");
       }
     } catch (error: any) {
       console.log("ORDER ERROR 👉", error.response?.data || error);

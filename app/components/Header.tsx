@@ -4,6 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { assets } from "@/assets/images/assets";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
+import { Switch } from "react-native";
 
 interface HeaderProps {
   title?: string;
@@ -20,6 +22,8 @@ interface HeaderProps {
   setSearchQuery?: (text: string) => void;
   onSearchOpen?: () => void;
   onSearchClose?: () => void;
+  admin?: boolean;
+  toggle?: boolean;
 }
 
 const Header = ({
@@ -36,11 +40,14 @@ const Header = ({
   isSearchVisible,
   HeadingIcon,
   Heading,
+  admin = false,
+  toggle = false,
 }: HeaderProps) => {
   const router = useRouter();
+  const { userData } = useAuth();
   const searchRef = useRef<TextInput>(null);
 
-  const { theme } = useAppTheme();
+  const { theme, toggleTheme } = useAppTheme();
   const isDark = theme === "dark";
 
   return (
@@ -89,6 +96,21 @@ const Header = ({
               />
             </>
           )}
+          {admin && (
+            <>
+              <Image
+                source={isDark ? assets.logo : assets.logodark}
+                className="size-10"
+              />
+              <Text
+                className={`text-xs font-bold uppercase tracking-widest ${
+                  isDark ? "text-gray-500" : "text-gray-400"
+                }`}
+              >
+                Hello, {userData?.name?.split(" ")[0] || "User"}
+              </Text>
+            </>
+          )}
 
           {title && (
             <Text
@@ -113,7 +135,15 @@ const Header = ({
               color={isDark ? "#fff" : "#000"}
             />
           )}
-
+          {toggle && (
+            <View
+              className={`rounded-3xl ${
+                isDark ? "" : "bg-white"
+              }`}
+            >
+                <Switch value={isDark} onValueChange={toggleTheme} />
+            </View>
+          )}
           {showSearch && (
             <TouchableOpacity
               onPress={() => {
@@ -146,7 +176,7 @@ const Header = ({
               />
             </TouchableOpacity>
           )}
-          
+
           {showClose && (
             <TouchableOpacity onPress={() => router.back()}>
               <View

@@ -13,12 +13,12 @@ import {
   Pressable,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 export default function Login() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, userData } = useAuth();
   const { theme, toggleTheme } = useAppTheme();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +34,11 @@ export default function Login() {
   const handleAuthSuccess = async (data: any) => {
     if (data.success && data.token) {
       await login(data.token);
-      router.replace("/(tabs)");
+      if (userData?.role === "user") {
+        router.replace("/(tabs)");
+      } else if (userData?.role === "admin") {
+        router.replace("/(tabs)/AdminDashboard");
+      }
     } else {
       Alert.alert("Error", data.message || "Authentication failed");
     }
@@ -160,7 +164,9 @@ export default function Login() {
         {/* Card */}
         <View
           className={`w-full rounded-2xl p-6 border ${
-            isDark ? "bg-[#111827] border-white/10" : "bg-white border-slate-200"
+            isDark
+              ? "bg-[#111827] border-white/10"
+              : "bg-white border-slate-200"
           }`}
         >
           {/* Heading */}

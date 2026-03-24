@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { useApi } from "@/hooks/useApi";
 import { useAppTheme } from "@/context/ThemeContext";
 import { assets } from "@/assets/images/assets";
 import { TextInput } from "react-native";
@@ -17,37 +16,35 @@ import { useRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import Header from "@/components/Header";
 import LoadingScreen from "@/components/LoadingScreen";
+import { useAuth } from "@/context/AuthContext";
 
 interface Product {
   _id: string;
   name: string;
   description: string;
-  price: number;
-  oldPrice: number;
+  price: number | string;
+  oldPrice: number | string;
   image: string[];
   category: string;
   subCategory: string;
-  bestseller: boolean;
+  bestseller?: boolean;
 }
 
 const Index = () => {
-  const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const searchRef = useRef<TextInput>(null);
   const [showSearch, setShowSearch] = useState(false);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const api = useApi();
+  const { products, fetchProducts } = useAuth();
+  const { userData } = useAuth();
   const router = useRouter();
   const { theme } = useAppTheme();
   const isDark = theme === "dark";
 
-  const fetchProducts = async () => {
+  const loadProducts = async (force = false) => {
     try {
-      const response = await api.get("/api/product/list");
-      if (response.data.success) {
-        setProducts(response.data.products);
-      }
+      await fetchProducts(force);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -62,12 +59,22 @@ const Index = () => {
   );
 
   useEffect(() => {
-    fetchProducts();
+    loadProducts();
   }, []);
+
+useEffect(() => {
+  if (userData?.role === "admin") {
+    router.replace("/(tabs)/AdminDashboard");
+  }
+}, [userData]);
+
+if (userData?.role === "admin") {
+  return <LoadingScreen />;
+}
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchProducts();
+    loadProducts(true);
   };
 
   const renderProduct = ({ item }: { item: Product }) => {
@@ -141,9 +148,7 @@ const Index = () => {
   };
 
   if (loading && !refreshing) {
-    return (
-      <LoadingScreen />
-    );
+    return <LoadingScreen />;
   }
 
   return (

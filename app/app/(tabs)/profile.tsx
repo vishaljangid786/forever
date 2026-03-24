@@ -2,7 +2,6 @@ import Header from "@/components/Header";
 import LoadingScreen from "@/components/LoadingScreen";
 import { useAuth } from "@/context/AuthContext";
 import { useAppTheme } from "@/context/ThemeContext";
-import { useApi } from "@/hooks/useApi";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -18,26 +17,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { logout: authLogout } = useAuth();
+  const {
+    logout: authLogout,
+    userData,
+    fetchUserData,
+    updateUserData,
+  } = useAuth();
   const { theme, toggleTheme } = useAppTheme();
   const isDark = theme === "dark";
-  const api = useApi();
 
-  const [userData, setUserData] = useState<any>(null);
   const [editData, setEditData] = useState<any>({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!userData);
   const [isEditing, setIsEditing] = useState(false);
 
-  // ✅ FETCH USER
   useEffect(() => {
-    const fetchUser = async () => {
+    if (userData) {
+      setLoading(false);
+      return;
+    }
+    const loadUser = async () => {
       try {
-        const res = await api.get("/api/user/fetchuserdata");
-        if (res.data.success) {
-          const user = res.data.user || res.data.userData;
-          setUserData(user);
-          setEditData(user); // 🔥 important
-        }
+        const user = await fetchUserData();
+        if (user) setEditData(user);
       } catch (err) {
         console.log(err);
       } finally {
@@ -45,8 +46,14 @@ export default function ProfileScreen() {
       }
     };
 
-    fetchUser();
+    loadUser();
   }, []);
+
+  useEffect(() => {
+    if (userData) {
+      setEditData(userData);
+    }
+  }, [userData]);
 
   // ✅ HANDLE CHANGE (normal fields)
   const handleChange = (key: string, value: string) => {
@@ -70,24 +77,39 @@ export default function ProfileScreen() {
   // ✅ SAVE PROFILE
   const handleSave = async () => {
     try {
-      const res = await api.put("/api/user/updateprofile", editData);
-
-      if (res.data.success) {
+      const updated = await updateUserData(editData);
+      if (updated) {
         Alert.alert("Success", "Profile updated");
-        setUserData(res.data.updatedUser);
         setIsEditing(false);
       } else {
-        Alert.alert("Error", res.data.message);
+        Alert.alert("Error", "Profile update failed");
       }
     } catch (err: any) {
       console.log(err);
       Alert.alert("Error", err.response?.data?.message || "Update failed");
     }
   };
-
-  const handleLogout = async () => {
-    await authLogout();
-    router.replace("/(auth)/login");
+  
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Yes, Logout",
+          style: "destructive",
+          onPress: async () => {
+            await authLogout();
+            router.replace("/(auth)/login");
+          },
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   if (loading) return <LoadingScreen />;
