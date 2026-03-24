@@ -1,31 +1,24 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  Alert,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-  ScrollView,
-  ImageBackground,
-  TouchableOpacity,
-} from "react-native";
-import { useRouter } from "expo-router";
-import axios from "axios";
 import { assets } from "@/assets/images/assets";
+import AppInput from "@/components/AppInput";
+import LoadingScreen from "@/components/LoadingScreen";
+import { backendUrl } from "@/constants/constants";
 import { useAuth } from "@/context/AuthContext";
 import { useAppTheme } from "@/context/ThemeContext";
-import { backendUrl } from "@/constants/constants";
-import { BlurView } from "expo-blur";
-import { StatusBar } from "expo-status-bar";
-import AppInput from "@/components/AppInput";
+import axios from "axios";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Image,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function Login() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, userData } = useAuth();
   const { theme, toggleTheme } = useAppTheme();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +34,11 @@ export default function Login() {
   const handleAuthSuccess = async (data: any) => {
     if (data.success && data.token) {
       await login(data.token);
-      router.replace("/(tabs)");
+      if (userData?.role === "user") {
+        router.replace("/(tabs)");
+      } else if (userData?.role === "admin") {
+        router.replace("/(tabs)/AdminDashboard");
+      }
     } else {
       Alert.alert("Error", data.message || "Authentication failed");
     }
@@ -78,6 +75,7 @@ export default function Login() {
       const response = await axios.post(`${backendUrl}/api/user/sendOtp`, {
         email,
       });
+      // console.log(response)
 
       if (response.data.success) {
         setOtpSent(true);
@@ -158,7 +156,7 @@ export default function Login() {
         <View className="w-32 h-32 rounded-full mb-16 p-[10px] items-center justify-center">
           <Image
             source={isDark ? assets.logo : assets.logodark}
-            className="w-full h-full"
+            className="w-full h-full "
             resizeMode="contain"
           />
         </View>
@@ -166,7 +164,9 @@ export default function Login() {
         {/* Card */}
         <View
           className={`w-full rounded-2xl p-6 border ${
-            isDark ? "bg-[#111827] border-white/10" : "bg-white border-slate-200"
+            isDark
+              ? "bg-[#111827] border-white/10"
+              : "bg-white border-slate-200"
           }`}
         >
           {/* Heading */}
@@ -222,7 +222,7 @@ export default function Login() {
             }`}
           >
             {loading ? (
-              <ActivityIndicator color={isDark ? "black" : "white"} />
+              <LoadingScreen />
             ) : (
               <Text
                 className={`text-center font-semibold text-lg ${

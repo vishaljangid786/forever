@@ -18,7 +18,7 @@ import authUser from "../middleware/auth.js";
 const orderRouter = express.Router();
 
 // Admin Features
-orderRouter.post("/list", allOrders);
+orderRouter.get("/list", allOrders);
 orderRouter.post("/status", adminAuth, updateStatus);
 orderRouter.post("/delete", deleteOrder);
 orderRouter.post("/deleteadmin", adminAuth, deleteOrderAdmin);

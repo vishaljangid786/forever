@@ -1,133 +1,321 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Switch } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useAuth } from '@/context/AuthContext';
-import { useApi } from '@/hooks/useApi';
-import { useAppTheme } from '@/context/ThemeContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-interface UserData {
-  name: string;
-  email: string;
-  uid: string;
-  location?: string;
-  address?: {
-    street?: string;
-    city?: string;
-    state?: string;
-    country?: string;
-    zipcode?: string;
-  };
-  referralCode?: string;
-  phone?: number;
-  role?: string;
-}
+import Header from "@/components/Header";
+import LoadingScreen from "@/components/LoadingScreen";
+import { useAuth } from "@/context/AuthContext";
+import { useAppTheme } from "@/context/ThemeContext";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  ScrollView,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { logout: authLogout } = useAuth();
+  const {
+    logout: authLogout,
+    userData,
+    fetchUserData,
+    updateUserData,
+  } = useAuth();
   const { theme, toggleTheme } = useAppTheme();
-  const isDark = theme === 'dark';
-  const api = useApi();
-  
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const isDark = theme === "dark";
+
+  const [editData, setEditData] = useState<any>({});
+  const [loading, setLoading] = useState(!userData);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    if (userData) {
+      setLoading(false);
+      return;
+    }
+    const loadUser = async () => {
       try {
-        const response = await api.get('/api/user/fetchuserdata');
-        if (response.data.success) {
-          setUserData(response.data.user || response.data.userData);
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+        const user = await fetchUserData();
+        if (user) setEditData(user);
+      } catch (err) {
+        console.log(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserData();
+    loadUser();
   }, []);
 
-  const handleLogout = async () => {
-    await authLogout();
-    router.replace('/(auth)/login');
+  useEffect(() => {
+    if (userData) {
+      setEditData(userData);
+    }
+  }, [userData]);
+
+  // ✅ HANDLE CHANGE (normal fields)
+  const handleChange = (key: string, value: string) => {
+    setEditData((prev: any) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
-  if (loading) {
-    return (
-      <View className={`flex-1 justify-center items-center ${isDark ? 'bg-[#121212]' : 'bg-white'}`}>
-        <ActivityIndicator size="large" color={isDark ? "#fff" : "#000"} />
-      </View>
+  // ✅ HANDLE ADDRESS CHANGE
+  const handleAddressChange = (key: string, value: string) => {
+    setEditData((prev: any) => ({
+      ...prev,
+      address: {
+        ...prev.address,
+        [key]: value,
+      },
+    }));
+  };
+
+  // ✅ SAVE PROFILE
+  const handleSave = async () => {
+    try {
+      const updated = await updateUserData(editData);
+      if (updated) {
+        Alert.alert("Success", "Profile updated");
+        setIsEditing(false);
+      } else {
+        Alert.alert("Error", "Profile update failed");
+      }
+    } catch (err: any) {
+      console.log(err);
+      Alert.alert("Error", err.response?.data?.message || "Update failed");
+    }
+  };
+  
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Yes, Logout",
+          style: "destructive",
+          onPress: async () => {
+            await authLogout();
+            router.replace("/(auth)/login");
+          },
+        },
+      ],
+      { cancelable: true },
     );
-  }
+  };
+
+  if (loading) return <LoadingScreen />;
 
   return (
-    <SafeAreaView className={`flex-1 ${isDark ? 'bg-[#121212]' : 'bg-[#fafafa]'}`}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-        <View className="px-6 py-6">
-          <Text className={`text-3xl font-black tracking-tighter ${isDark ? 'text-white' : 'text-[#1a1a1a]'}`}>
-            My Profile<Text className="text-red-500">.</Text>
-          </Text>
-        </View>
+    <SafeAreaView
+      className={`flex-1 ${isDark ? "bg-[#0f0f0f]" : "bg-[#f5f5f5]"}`}
+    >
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+        <Header Heading="My Profile" HeadingIcon={"person-circle-outline"} />
 
-        <View className="items-center mb-8 px-6">
-          <View className={`w-32 h-32 rounded-[40px] items-center justify-center shadow-xl ${isDark ? 'bg-[#1e1e1e]' : 'bg-white'}`}>
-            <View className={`w-24 h-24 rounded-[30px] items-center justify-center ${isDark ? 'bg-gray-800' : 'bg-black'}`}>
-              <Text className="text-white text-4xl font-black">
-                {userData?.name?.charAt(0).toUpperCase() || 'U'}
-              </Text>
+        {/* PROFILE HEADER */}
+        <View
+          className={`items-center mt-6 mb-10 px-6${
+            isDark ? "bg-gray-500" : "bg-white"
+          } mx-4 rounded-xl p-6 `}
+        >
+          {/* Avatar Wrapper */}
+          <View className="relative">
+            {/* Outer Ring */}
+            <View className="w-32 h-32 rounded-full items-center justify-center bg-red-500/20">
+              {/* Inner Circle */}
+              <View
+                className={`w-28 h-28 rounded-full items-center justify-center shadow-xl ${
+                  isDark ? "bg-[#1c1c1c]" : "bg-white"
+                }`}
+              >
+                <Text className="text-4xl font-extrabold text-red-500">
+                  {userData?.name?.charAt(0)?.toUpperCase() || "U"}
+                </Text>
+              </View>
             </View>
-            <TouchableOpacity className={`absolute bottom-0 right-0 w-10 h-10 bg-red-500 rounded-full items-center justify-center border-4 ${isDark ? 'border-[#121212]' : 'border-[#fafafa]'}`}>
-              <Text className="text-white text-xs rotate-90">✏️</Text>
+
+            {/* ✏️ Edit Button */}
+            <TouchableOpacity
+              className="absolute bottom-1 right-1 w-10 h-10 bg-red-500 rounded-full items-center justify-center border-2 border-white"
+              onPress={() => setIsEditing(true)}
+            >
+              <Text className="text-white text-sm">✏️</Text>
             </TouchableOpacity>
           </View>
-          <Text className={`text-2xl font-black mt-4 ${isDark ? 'text-white' : 'text-black'}`}>
-            {userData?.name || 'User'}
+
+          {/* Name */}
+          <Text
+            className={`text-2xl font-extrabold mt-5 ${
+              isDark ? "text-white" : "text-black"
+            }`}
+          >
+            {userData?.name || "User Name"}
           </Text>
-          <Text className={`text-sm font-medium ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+
+          {/* Email */}
+          <Text
+            className={`text-sm mt-1 ${
+              isDark ? "text-gray-400" : "text-gray-500"
+            }`}
+          >
             {userData?.email}
           </Text>
+
+          {/* 🔥 Extra Info Row (NEW) */}
+          <View className="flex-row mt-4 gap-6">
+            {/* Phone */}
+            <View className="items-center">
+              <Text
+                className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}
+              >
+                Phone
+              </Text>
+              <Text
+                className={`text-sm font-semibold ${isDark ? "text-white" : "text-black"}`}
+              >
+                {userData?.phone || "-"}
+              </Text>
+            </View>
+
+            {/* Location */}
+            <View className="items-center">
+              <Text
+                className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}
+              >
+                Location
+              </Text>
+              <Text
+                className={`text-sm font-semibold ${isDark ? "text-white" : "text-black"}`}
+              >
+                {userData?.location || "-"}
+              </Text>
+            </View>
+          </View>
         </View>
 
-        <View className="px-6">
-          <View className={`rounded-[20px] overflow-hidden shadow-sm ${isDark ? 'bg-[#1e1e1e]' : 'bg-white'}`}>
-            <ProfileItem icon="🆔" label="Account ID" value={userData?.uid?.slice(0, 12) + '...'} isDark={isDark} />
-            <ProfileItem icon="📱" label="Phone" value={userData?.phone?.toString()} isDark={isDark} />
-            <ProfileItem icon="🛡️" label="Role" value={userData?.role} isDark={isDark} />
-            <ProfileItem icon="🎁" label="Referral" value={userData?.referralCode} isDark={isDark} isLast />
-          </View>
+        <View
+          className={`mx-4 mb-6 p-5 rounded-3xl ${
+            isDark ? "bg-[#1a1a1a]" : "bg-white"
+          }`}
+        >
+          <View className="flex-row justify-between items-center">
+            <Text
+              className={`text-base font-semibold ${
+                isDark ? "text-white" : "text-black"
+              }`}
+            >
+              Dark Mode
+            </Text>
 
-          <View className={`mt-6 rounded-[32px] overflow-hidden shadow-sm ${isDark ? 'bg-[#1e1e1e]' : 'bg-white'}`}>
-            <TouchableOpacity onPress={toggleTheme} className="p-5 flex-row justify-between items-center">
-              <View className="flex-row items-center">
-                <View className={`w-10 h-10 rounded-2xl items-center justify-center mr-4 ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
-                  <Text className="text-lg">{isDark ? '🌙' : '☀️'}</Text>
-                </View>
-                <View>
-                  <Text className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                    Appearance
-                  </Text>
-                  <Text className={`text-sm font-bold ${isDark ? 'text-white' : 'text-black'}`}>
-                    Dark Mode
-                  </Text>
-                </View>
-              </View>
-              <Switch
-                value={isDark}
-                onValueChange={toggleTheme}
-                trackColor={{ false: "#e5e7eb", true: "#ef4444" }}
-                thumbColor="#fff"
-              />
-            </TouchableOpacity>
+            <Switch value={isDark} onValueChange={toggleTheme} />
           </View>
+        </View>
 
-          <TouchableOpacity 
-            onPress={handleLogout}
-            className={`mt-8 py-5 rounded-[24px] flex-row items-center justify-center border-2 ${isDark ? 'border-red-500/20 bg-red-500/5' : 'border-red-500/30 bg-red-500/30'}`}
+        {/* 🔥 MAIN CARD */}
+        <View
+          className={`mx-4 rounded-3xl p-5 shadow-md ${
+            isDark ? "bg-[#1a1a1a]" : "bg-white"
+          }`}
+        >
+          {/* BASIC INFO */}
+          <Text
+            className={`text-lg font-bold mb-4 ${
+              isDark ? "text-white" : "text-black"
+            }`}
           >
-            <Text className="text-red-500 text-base font-black uppercase tracking-widest">Sign Out</Text>
+            Basic Info
+          </Text>
+
+          <Field
+            label="Full Name"
+            value={editData?.name}
+            editable={isEditing}
+            onChange={(v: any) => handleChange("name", v)}
+            isDark={isDark}
+          />
+
+          <Field
+            label="Phone Number"
+            value={editData?.phone?.toString()}
+            editable={isEditing}
+            onChange={(v: any) => handleChange("phone", v)}
+            isDark={isDark}
+          />
+
+          <Field
+            label="Location"
+            value={editData?.location}
+            editable={isEditing}
+            onChange={(v: any) => handleChange("location", v)}
+            isDark={isDark}
+          />
+
+          {/* 🔥 ADDRESS */}
+          <Text
+            className={`text-lg font-bold mt-6 mb-3 ${
+              isDark ? "text-white" : "text-black"
+            }`}
+          >
+            Address
+          </Text>
+
+          {["street", "city", "state", "country", "zipcode"].map((key) => (
+            <Field
+              key={key}
+              label={key}
+              value={editData?.address?.[key]}
+              editable={isEditing}
+              onChange={(v: any) => handleAddressChange(key, v)}
+              isDark={isDark}
+            />
+          ))}
+        </View>
+
+        {/* 🔥 ACTION BUTTONS */}
+        <View className="px-4 mt-6">
+          <TouchableOpacity
+            onPress={() => setIsEditing(!isEditing)}
+            className={`py-4 rounded-2xl ${
+              isEditing ? "bg-gray-400" : "bg-blue-500"
+            }`}
+          >
+            <Text className="text-white text-center font-bold text-base">
+              {isEditing ? "Cancel Editing" : "Edit Profile"}
+            </Text>
+          </TouchableOpacity>
+
+          {isEditing && (
+            <TouchableOpacity
+              onPress={handleSave}
+              className="mt-3 py-4 bg-green-500 rounded-2xl"
+            >
+              <Text className="text-white text-center font-bold text-base">
+                Save Changes
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* 🔥 SETTINGS CARD */}
+
+        {/* 🔥 LOGOUT */}
+        <View className="px-4 mt-6 my-10">
+          <TouchableOpacity
+            onPress={handleLogout}
+            className="py-4 border border-red-500 rounded-2xl"
+          >
+            <Text className="text-red-500 text-center font-bold text-base">
+              Logout
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -135,19 +323,49 @@ export default function ProfileScreen() {
   );
 }
 
-const ProfileItem = ({ icon, label, value, isDark, isLast }: { icon: string; label: string; value?: string; isDark: boolean, isLast?: boolean }) => (
-  <View className={`p-5 flex-row items-center ${!isLast ? (isDark ? 'border-b border-gray-800' : 'border-b border-gray-200') : ''}`}>
-    <View className={`w-10 h-10 rounded-2xl items-center justify-center mr-4 ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
-      <Text className="text-lg">{icon}</Text>
-    </View>
-    <View className="flex-1">
-      <Text className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-        {label}
-      </Text>
-      <Text className={`text-sm font-bold ${isDark ? 'text-white' : 'text-black'}`}>
-        {value || 'Not set'}
-      </Text>
-    </View>
-    <Text className={`${isDark ? 'text-gray-200' : 'text-gray-600'} `}>›</Text>
+// 🔥 REUSABLE FIELD
+const Field = ({ label, value, editable, onChange, isDark }: any) => (
+  <View className="mb-4">
+    <Text
+      className={`text-xs mb-1 font-semibold ${
+        isDark ? "text-gray-400" : "text-gray-500"
+      }`}
+    >
+      {label.toUpperCase()}
+    </Text>
+
+    {editable ? (
+      <TextInput
+        value={value}
+        onChangeText={onChange}
+        placeholder={`Enter ${label}`}
+        placeholderTextColor={isDark ? "#666" : "#999"}
+        className={`p-4 rounded-xl text-sm ${
+          isDark
+            ? "bg-[#2a2a2a] text-white border border-[#333]"
+            : "bg-gray-100 text-black border border-gray-200"
+        }`}
+      />
+    ) : (
+      <View
+        className={`p-4 rounded-xl flex-row items-center justify-between ${
+          isDark
+            ? "bg-[#2a2a2a]/60 border border-[#2f2f2f]"
+            : "bg-gray-100/70 border border-gray-200"
+        }`}
+        style={{ opacity: 0.7 }} // 🔥 fade effect
+      >
+        <Text
+          className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}
+        >
+          {value || "Not set"}
+        </Text>
+
+        {/* 🔒 Optional Lock Icon */}
+        <Text className={`${isDark ? "text-gray-500" : "text-gray-400"}`}>
+          🔒
+        </Text>
+      </View>
+    )}
   </View>
 );

@@ -1,64 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   FlatList,
-  StyleSheet,
-  ActivityIndicator,
   RefreshControl,
-  Image,
   TouchableOpacity,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useApi } from '@/hooks/useApi';
-import { useAppTheme } from '@/context/ThemeContext';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useAppTheme } from "@/context/ThemeContext";
+import Header from "@/components/Header";
+import LoadingScreen from "@/components/LoadingScreen";
+import { Image } from "react-native";
+import { useAuth } from "@/context/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
 
 interface OrderItem {
-  productId?: {
-    _id: string;
-    name: string;
-    price: number;
-    image: string[];
-  };
-  name: string;
+  productId?: string;
+  size: string;
+  color: string;
   price: number;
   quantity: number;
-  image: string[];
 }
 
 interface Order {
   _id: string;
-  userId?: {
-    _id: string;
-    name: string;
-    email: string;
-    phone?: string;
-  };
   items: OrderItem[];
   amount: number;
   status: string;
   date: number;
   payment: boolean;
-  address: any;
+  paymentMethod?: string;
+  address?: any;
 }
 
 const Orders = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const api = useApi();
   const { theme } = useAppTheme();
-  const isDark = theme === 'dark';
+  const isDark = theme === "dark";
+  const { orders, productsMap, fetchOrders, userData } = useAuth();
 
-  const fetchOrders = async () => {
+  const loadOrders = async (force = false) => {
     try {
-      const response = await api.get('/api/order/userorders');
-      if (response.data.success) {
-        setOrders(response.data.orders.reverse());
-        console.log(response.data)
-      }
+      await fetchOrders(force);
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      console.error("Error fetching orders:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -66,136 +52,230 @@ const Orders = () => {
   };
 
   useEffect(() => {
-    fetchOrders();
+    loadOrders();
   }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchOrders();
+    loadOrders(true);
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusStyle = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'delivered': return 'text-green-500';
-      case 'shipped': return 'text-blue-500';
-      case 'processing': return 'text-orange-500';
-      case 'cancelled': return 'text-red-500';
-      default: return isDark ? 'text-gray-400' : 'text-gray-500';
+      case "delivered":
+        return "border-green-500 bg-green-500/10 text-green-500";
+      case "shipped":
+        return "border-blue-500 bg-blue-500/10 text-blue-500";
+      case "processing":
+        return "border-orange-500 bg-orange-500/10 text-orange-500";
+      case "cancelled":
+        return "border-red-500 bg-red-500/10 text-red-500";
+      default:
+        return "border-gray-400 bg-gray-400/10 text-gray-500";
     }
   };
 
-  const renderOrder = ({ item }: { item: Order }) => (
-    <TouchableOpacity 
-      className={`mb-6 rounded-3xl overflow-hidden shadow-sm ${isDark ? 'bg-[#1e1e1e]' : 'bg-white'}`}
-      style={{ elevation: 2 }}
-      onPress={() => console.log('Single Order Details:', JSON.stringify(item, null, 2))}
-    >
-      <View className={`px-5 py-4 flex-row justify-between items-center border-b ${isDark ? 'border-gray-800' : 'border-gray-50'}`}>
-        <View>
-          <Text className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-            Order ID
-          </Text>
-          <Text className={`text-sm font-black ${isDark ? 'text-white' : 'text-black'}`}>
-            #{item._id.slice(-8).toUpperCase()}
-          </Text>
-        </View>
-        <View className="items-end">
-          <View className={`px-3 py-1 rounded-full ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
-            <Text className={`text-[10px] font-black uppercase ${getStatusColor(item.status)}`}>
-              {item.status}
+  const renderOrder = ({ item }: { item: Order }) => {
+    const totalItems = item.items.reduce((acc, i) => acc + i.quantity, 0);
+
+    return (
+      <TouchableOpacity
+        className={`mb-5 rounded-3xl overflow-hidden ${
+          isDark ? "bg-[#1e1e1e]" : "bg-white"
+        }`}
+        style={{ elevation: 2 }}
+      >
+        {/* HEADER */}
+        <View
+          className={`px-5 py-4 flex-row justify-between items-center border-b ${
+            isDark ? "border-gray-800" : "border-gray-100"
+          }`}
+        >
+          <View>
+            <Text
+              className={`text-[10px] font-bold uppercase ${
+                isDark ? "text-gray-500" : "text-gray-400"
+              }`}
+            >
+              Order
+            </Text>
+            <Text
+              className={`text-sm font-black ${
+                isDark ? "text-white" : "text-black"
+              }`}
+            >
+              #{item._id.slice(-5)}
             </Text>
           </View>
-          {item.userId?.name && (
-            <Text className={`text-[10px] mt-1 font-bold ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-              For: {item.userId.name}
-            </Text>
-          )}
-        </View>
-      </View>
-      
-      <View className="p-5">
-        {item.items.map((prod, index) => (
-          <View key={index} className="flex-row items-center mb-4">
-            <Image 
-              source={{ uri: prod.productId?.image?.[0] || prod.image?.[0] || 'https://imgs.search.brave.com/v32MO73ybj4I0fNwlWUU6DmFm_UOsMXyRoOchwBNI7s/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wbGFj/ZWhvbGQubmV0L3By/b2R1Y3Quc3Zn' }} 
-              className="w-16 h-16 rounded-2xl bg-gray-100"
-            />
-            <View className="flex-1 ml-4">
-              <Text className={`text-base font-bold ${isDark ? 'text-white' : 'text-black'}`} numberOfLines={1}>
-                {prod.productId?.name || prod.name}
-              </Text>
-              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                ₹{prod.productId?.price || prod.price} × {prod.quantity}
+
+          <View className="items-end">
+            <View
+              className={`px-3 py-1 rounded-full border ${getStatusStyle(
+                item.status,
+              )}`}
+            >
+              <Text className="text-[10px] font-bold uppercase">
+                {item.status}
               </Text>
             </View>
-          </View>
-        ))}
 
-        {item.address && (
-          <View className={`mb-4 p-3 rounded-2xl ${isDark ? 'bg-gray-800/50' : 'bg-gray-50'}`}>
-            <Text className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-              Shipping Address
-            </Text>
-            <Text className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              {item.address.street}, {item.address.city}
-            </Text>
-          </View>
-        )}
-
-        <View className={`mt-2 pt-4 border-t flex-row justify-between items-end ${isDark ? 'border-gray-800' : 'border-gray-50'}`}>
-          <View>
-            <Text className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-              Date
-            </Text>
-            <Text className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-            </Text>
-          </View>
-          <View className="items-end">
-            <Text className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-              Total Amount
-            </Text>
-            <Text className={`text-xl font-black ${isDark ? 'text-white' : 'text-black'}`}>
-              ₹{item.amount}
+            <Text
+              className={`text-[10px] mt-1 ${
+                isDark ? "text-gray-400" : "text-gray-500"
+              }`}
+            >
+              {totalItems} items • {item.paymentMethod}
             </Text>
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+
+        {/* ITEMS */}
+        <View className="p-5">
+          {item.items.map((prod: any, index) => {
+            const product = productsMap[prod.productId];
+
+            return (
+              <View
+                key={index}
+                className={`flex-row items-center mb-3 p-3 rounded-2xl ${
+                  isDark ? "bg-gray-800/40" : "bg-gray-50"
+                }`}
+              >
+                {/* IMAGE */}
+                {product?.image?.[0] ? (
+                  <Image
+                    source={{ uri: product.image[0] }}
+                    className="w-14 h-14 rounded-xl"
+                  />
+                ) : (
+                  <View className="w-14 h-14 bg-gray-300 justify-center items-center rounded-xl">
+                    <Text>📦</Text>
+                  </View>
+                )}
+
+                {/* INFO */}
+                <View className="flex-1 ml-3">
+                  <Text
+                    numberOfLines={1}
+                    className={`text-sm font-bold ${
+                      isDark ? "text-white" : "text-black"
+                    }`}
+                  >
+                    {product?.name || `${prod.size} Product`}
+                  </Text>
+
+                  <Text
+                    className={`text-xs ${
+                      isDark ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    {prod.size} • {prod.color}
+                  </Text>
+
+                  <Text
+                    className={`text-sm font-semibold ${
+                      isDark ? "text-gray-200" : "text-gray-700"
+                    }`}
+                  >
+                    ₹{prod.price} × {prod.quantity}
+                  </Text>
+                </View>
+
+                {/* TOTAL */}
+                <Text
+                  className={`text-sm font-bold ${
+                    isDark ? "text-white" : "text-black"
+                  }`}
+                >
+                  ₹{prod.price * prod.quantity}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   if (loading && !refreshing) {
-    return (
-      <View className={`flex-1 justify-center items-center ${isDark ? 'bg-[#121212]' : 'bg-white'}`}>
-        <ActivityIndicator size="large" color={isDark ? "#fff" : "#000"} />
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   return (
-    <SafeAreaView className={`flex-1 ${isDark ? 'bg-[#121212]' : 'bg-[#fafafa]'}`}>
-      <View className="px-6 py-6">
-        <Text className={`text-3xl font-black tracking-tighter ${isDark ? 'text-white' : 'text-[#1a1a1a]'}`}>
-          My Orders<Text className="text-red-500">.</Text>
-        </Text>
-      </View>
-      
-      <FlatList
-        data={orders}
-        renderItem={renderOrder}
-        keyExtractor={(item) => item._id}
-        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={isDark ? "#fff" : "#000"} />
-        }
-        ListEmptyComponent={
-          <View className="flex-1 justify-center items-center py-20">
-            <Text className="text-4xl mb-4">📦</Text>
-            <Text className={`text-lg font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No orders yet</Text>
-          </View>
-        }
-      />
+    <SafeAreaView
+      className={`flex-1 ${isDark ? "bg-[#121212]" : "bg-[#fafafa]"}`}
+    >
+      {userData.role === "admin" && (
+        <View>
+          <Header Heading="All Orders" HeadingIcon="cart-outline" />
+
+          <FlatList
+            data={orders}
+            renderItem={renderOrder}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={{
+              paddingHorizontal: 16,
+              paddingBottom: 40,
+            }}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={isDark ? "#fff" : "#000"}
+              />
+            }
+            ListEmptyComponent={
+              <View className="flex-1 justify-center items-center py-20">
+                <Ionicons name="cube-outline"  size={40} className="mb-3" color={isDark ? "#fafafa" : "#1212"}/>
+                <Text
+                  className={`text-lg ${
+                    isDark ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  No orders yet.
+                </Text>
+              </View>
+            }
+          />
+        </View>
+      )}
+
+       {userData.role === "user" && (
+        <View>
+          <Header Heading="My Orders" HeadingIcon="cart-outline" />
+
+          <FlatList
+            data={orders}
+            renderItem={renderOrder}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={{
+              paddingHorizontal: 16,
+              paddingBottom: 40,
+            }}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={isDark ? "#fff" : "#000"}
+              />
+            }
+            ListEmptyComponent={
+              <View className="flex-1 justify-center items-center py-20">
+                <Ionicons name="cube-outline"  size={40} className="mb-3" color={isDark ? "#fafafa" : "#1212"}/>
+                <Text
+                  className={`text-lg ${
+                    isDark ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  No orders yet.
+                </Text>
+              </View>
+            }
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
